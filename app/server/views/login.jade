@@ -23,14 +23,11 @@ block content
 			.clearfix
 			hr
 			.btm-links
-				#forgot-password
-					a(href='#') Forgot Your Password?
 				#create-account
 					a(href='/signup') Create An Account
 			.clearfix
 
 	include modals/alert
-	include modals/lost-password
 
 block scripts
 	script(src='/vendor/jquery-2.2.3.min.js')
@@ -39,4 +36,3 @@ block scripts
 	script(src='/js/views/login.js')
 	script(src='/js/controllers/loginController.js')
 	script(src='/js/form-validators/loginValidator.js')
-	script(src='/js/form-validators/emailValidator.js')
