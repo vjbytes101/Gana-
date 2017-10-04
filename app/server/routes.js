@@ -2,13 +2,13 @@ var AM = require('./modules/account-manager');
 
 module.exports = function(app) {
 
-// main login page //
+	// main login page //
 	app.get('/', function(req, res){
 		// check if the user's credentials are saved in a cookie //
 		if (req.cookies.user == undefined || req.cookies.pass == undefined){
 			res.render('login', { title: 'Hello - Please Login To Your Account' });
 		}	else{
-		// attempt automatic login //
+			// attempt automatic login //
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
 				    req.session.user = o;
@@ -35,8 +35,7 @@ module.exports = function(app) {
 		});
 	});
 	
-// logged-in user homepage //
-	
+	// logged-in user homepage //
 	app.get('/home', function(req, res) {
 		if (req.session.user == null){
 		// if user is not logged-in redirect back to login page //
@@ -44,7 +43,6 @@ module.exports = function(app) {
 		}	else{
 			res.render('home', {
 				title : 'Control Panel',
-				countries : CT,
 				udata : req.session.user
 			});
 		}
@@ -85,7 +83,7 @@ module.exports = function(app) {
 	// creating new accounts //
 	
 	app.get('/signup', function(req, res) {
-		res.render('signup', {  title: 'Signup', countries : CT });
+		res.render('signup', {  title: 'Signup'});
 	});
 	
 	app.post('/signup', function(req, res){
