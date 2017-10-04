@@ -7,7 +7,7 @@ var moment = require('moment');
 	ESTABLISH DATABASE CONNECTION
 */
 
-var dbName = process.env.DB_NAME || 'node-login';
+var dbName = process.env.DB_NAME || 'nodeTest';
 var dbHost = process.env.DB_HOST || 'localhost'
 var dbPort = process.env.DB_PORT || 27017;
 
@@ -105,45 +105,10 @@ exports.updateAccount = function(newData, callback) {
     });
 }
 
-exports.updatePassword = function(email, newPass, callback) {
-    accounts.findOne({ email: email }, function(e, o) {
-        if (e) {
-            callback(e, null);
-        } else {
-            saltAndHash(newPass, function(hash) {
-                o.pass = hash;
-                accounts.save(o, { safe: true }, callback);
-            });
-        }
-    });
-}
-
 /* account lookup methods */
 
 exports.deleteAccount = function(id, callback) {
     accounts.remove({ _id: getObjectId(id) }, callback);
-}
-
-exports.getAccountByEmail = function(email, callback) {
-    accounts.findOne({ email: email }, function(e, o) { callback(o); });
-}
-
-exports.validateResetLink = function(email, passHash, callback) {
-    accounts.find({ $and: [{ email: email, pass: passHash }] }, function(e, o) {
-        callback(o ? 'ok' : null);
-    });
-}
-
-exports.getAllRecords = function(callback) {
-    accounts.find().toArray(
-        function(e, res) {
-            if (e) callback(e)
-            else callback(null, res)
-        });
-}
-
-exports.delAllRecords = function(callback) {
-    accounts.remove({}, callback); // reset accounts collection for testing //
 }
 
 /* private encryption & validation methods */
@@ -177,19 +142,3 @@ var getObjectId = function(id) {
     return new require('mongodb').ObjectID(id);
 }
 
-var findById = function(id, callback) {
-    accounts.findOne({ _id: getObjectId(id) },
-        function(e, res) {
-            if (e) callback(e)
-            else callback(null, res)
-        });
-}
-
-var findByMultipleFields = function(a, callback) {
-    // this takes an array of name/val pairs to search against {fieldName : 'value'} //
-    accounts.find({ $or: a }).toArray(
-        function(e, results) {
-            if (e) callback(e)
-            else callback(null, results)
-        });
-}
