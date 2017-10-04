@@ -24,23 +24,22 @@ var dbHost = process.env.DB_HOST || 'localhost'
 var dbPort = process.env.DB_PORT || 27017;
 var dbName = process.env.DB_NAME || 'node-login';
 
-var dbURL = 'mongodb://'+dbHost+':'+dbPort+'/'+dbName;
-if (app.get('env') == 'live'){
-// prepend url with authentication credentials // 
-	dbURL = 'mongodb://'+process.env.DB_USER+':'+process.env.DB_PASS+'@'+dbHost+':'+dbPort+'/'+dbName;
+var dbURL = 'mongodb://' + dbHost + ':' + dbPort + '/' + dbName;
+if (app.get('env') == 'live') {
+    // prepend url with authentication credentials // 
+    dbURL = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + dbHost + ':' + dbPort + '/' + dbName;
 }
 
 app.use(session({
-	secret: 'kjfoiwgjo4p39uu895jginjkn394t8hngijnklnhvrirnveijf3oij',
-	proxy: true,
-	resave: true,
-	saveUninitialized: true,
-	store: new MongoStore({ url: dbURL })
-	})
-);
+    secret: 'kjfoiwgjo4p39uu895jginjkn394t8hngijnklnhvrirnveijf3oij',
+    proxy: true,
+    resave: true,
+    saveUninitialized: true,
+    store: new MongoStore({ url: dbURL })
+}));
 
 require('./app/server/routes')(app);
 
-http.createServer(app).listen(app.get('port'), function(){
-	console.log('Express server listening on port ' + app.get('port'));
+http.createServer(app).listen(app.get('port'), function() {
+    console.log('Express server listening on port ' + app.get('port'));
 });
