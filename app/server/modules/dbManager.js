@@ -4,7 +4,7 @@ var Server = require('mongodb').Server;
 var moment = require('moment');
 
 /*
-	ESTABLISH DATABASE CONNECTION
+    ESTABLISH DATABASE CONNECTION
 */
 
 var dbName = process.env.DB_NAME || 'nodeTest';
@@ -16,21 +16,12 @@ db.open(function(e, d) {
     if (e) {
         console.log(e);
     } else {
-        if (process.env.NODE_ENV == 'live') {
-            db.authenticate(process.env.DB_USER, process.env.DB_PASS, function(e, res) {
-                if (e) {
-                    console.log('mongo :: error: not authenticated', e);
-                } else {
-                    console.log('mongo :: authenticated and connected to database :: "' + dbName + '"');
-                }
-            });
-        } else {
-            console.log('mongo :: connected to database :: "' + dbName + '"');
-        }
+        console.log('mongo :: connected to database :: "' + dbName + '"');
     }
 });
 
 var accounts = db.collection('accounts');
+var allSongs = db.collection('allSongs');
 
 /* login validation methods */
 
@@ -81,6 +72,34 @@ exports.addNewAccount = function(newData, callback) {
             });
         }
     });
+}
+
+exports.addNewSong = function(newData, callback) {
+    allSongs.findOne({ songName: newData.songName, artistName: newData.artistName }, function(err, songData) {
+        if (err) {
+            callback(err);
+            console.log(err);
+        } else {
+            if (songData == null) {
+                allSongs.insert(newData, (e, o) => {
+                    if (e) {
+                        callback(e);
+                        console.log(err);
+                    } else {
+                        callback(null, "1");
+                        console.log("song added in db");
+                    }
+                });
+            } else {
+                callback(null, "2");
+                console.log("song already exist in db");
+            }
+        }
+    });
+}
+
+exports.getAllSongs = function(query, callback) {
+    allSongs.find(query).toArray(callback);
 }
 
 exports.updateAccount = function(newData, callback) {
@@ -141,4 +160,3 @@ var validatePassword = function(plainPass, hashedPass, callback) {
 var getObjectId = function(id) {
     return new require('mongodb').ObjectID(id);
 }
-

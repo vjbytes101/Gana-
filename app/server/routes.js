@@ -1,4 +1,4 @@
-var AM = require('./modules/account-manager');
+var AM = require('./modules/dbManager');
 
 module.exports = function(app) {
 
@@ -35,7 +35,6 @@ module.exports = function(app) {
             res.redirect('/');
         } else {
             res.render('home', {
-                title: 'Control Panel',
                 udata: req.session.user
             });
         }
@@ -62,6 +61,65 @@ module.exports = function(app) {
                         res.cookie('pass', o.pass, { maxAge: 900000 });
                     }
                     res.status(200).send('ok');
+                }
+            });
+        }
+    });
+
+    app.get('/artist', function(req, res) {
+        if (req.session.user == null) {
+            res.redirect('/');
+        } else {
+            var query = req.query;
+            AM.getAllSongs(query, (err, data) => {
+                if (err) {
+                    //do err handling
+                } else {
+                    res.render('artist', { artistName: query.artistName, songData: data });
+                }
+            })
+        }
+    });
+
+    app.get('/library', function(req, res) {
+        if (req.session.user == null) {
+            res.redirect('/');
+        } else {
+            var query = {};
+            AM.getAllSongs(query, (err, data) => {
+                if (err) {
+                    //do err handling
+                } else {
+                    res.render('library', { songData: data });
+                }
+            })
+        }
+    });
+
+    app.get('/addsong', function(req, res) {
+        if (req.session.user == null) {
+            res.redirect('/');
+        } else {
+            res.render('addsong');
+        }
+    });
+
+    app.post('/addsong', function(req, res) {
+        if (req.session.user == null) {
+            res.redirect('/');
+        } else {
+            AM.addNewSong({
+                songName: req.body['songName'],
+                artistName: req.body['artistName'],
+                albumName: req.body['albumName']
+            }, function(e, o) {
+                console.log(12);
+                if (e) {
+                    console.log(e);
+                    //show error
+                } else {
+                    console.log(12321);
+                    res.redirect('back');
                 }
             });
         }

@@ -9,7 +9,7 @@ block content
 					nav.navbar.navbar-default.navbar-fixed-top
 						.container
 							.navbar-header
-								.navbar-brand Library
+								.navbar-brand #{artistName + "'s Songs"}
 							ul.nav.navbar-nav.navbar-right
 								li
 									.navbar-btn#btn-home.btn.btn-default
@@ -31,10 +31,8 @@ block content
 							each item in songData
 								tr
 									td= item.songName
-									td
-										a(href= '/artist?artistName=' + item.artistName)= item.artistName
+									td= item.artistName
 									td= item.albumName
-									td.addSongButton(data-song-name=item.songName) Add Song to your list
 
 	include modals/alert
 	include modals/confirm
@@ -43,4 +41,4 @@ block scripts
 	script(src='/vendor/jquery-2.2.3.min.js')
 	script(src='/vendor/jquery.form.min.js')
 	script(src='/vendor/bootstrap.min.js')
-	script(src='/js/views/home.js')
+	script(src='/js/views/artist.js')

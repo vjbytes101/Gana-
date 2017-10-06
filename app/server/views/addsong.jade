@@ -1,0 +1,34 @@
+
+extends layout
+
+block content
+
+	#account-form-container.center-vertical
+		form(method="post")#account-form.form-horizontal.well
+			h2
+			hr
+			.form-group
+				label.control-label.col-sm-3 Song Name
+				.col-sm-9
+					input.form-control#name-tf(type='text', name='songName')
+			.form-group
+				label.control-label.col-sm-3 Artist Name
+				.col-sm-9
+					input.form-control#user-tf(type='text', name='artistName')
+			.form-group
+				label.control-label.col-sm-3 Album Name
+				.col-sm-9
+					input.form-control#pass-tf(type='text', name='albumName')
+
+			hr
+			.form-buttons
+				button(type='submit')#account-form-btn2.btn.btn-primary ADD
+			.clearfix
+
+	include modals/form-errors
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/jquery.form.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/addSong.js')
