@@ -34,8 +34,13 @@ module.exports = function(app) {
             // if user is not logged-in redirect back to login page //
             res.redirect('/');
         } else {
-            res.render('home', {
-                udata: req.session.user
+            var userName = req.session && req.session.user && req.session.user.name;
+            AM.getUserSongs(userName, (err, data) => {
+                if (err) {
+                    //do err handling
+                } else {
+                    res.render('home', data);
+                }
             });
         }
     });

@@ -9,7 +9,7 @@ block content
 					nav.navbar.navbar-default.navbar-fixed-top
 						.container
 							.navbar-header
-								.navbar-brand Library
+								.navbar-brand #{userName + "'s Songs"}
 							ul.nav.navbar-nav.navbar-right
 								li
 									.navbar-btn#btn-home.btn.btn-default
@@ -28,13 +28,12 @@ block content
 								th Artist Name
 								th Album Name
 						tbody
-							each item in songData
+							each item in songs
 								tr
 									td= item.songName
 									td
 										a(href= '/artist?artistName=' + item.artistName)= item.artistName
 									td= item.albumName
-									td.addSongButton(data-song-name=item.songName) Add Song to your list
 
 	include modals/alert
 	include modals/confirm

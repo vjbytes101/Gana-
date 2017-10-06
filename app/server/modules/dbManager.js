@@ -2,6 +2,7 @@ var crypto = require('crypto');
 var MongoDB = require('mongodb').Db;
 var Server = require('mongodb').Server;
 var moment = require('moment');
+var _ = require('lodash');
 
 /*
     ESTABLISH DATABASE CONNECTION
@@ -22,6 +23,7 @@ db.open(function(e, d) {
 
 var accounts = db.collection('accounts');
 var allSongs = db.collection('allSongs');
+var userSongs = db.collection('userSongs');
 
 /* login validation methods */
 
@@ -100,6 +102,42 @@ exports.addNewSong = function(newData, callback) {
 
 exports.getAllSongs = function(query, callback) {
     allSongs.find(query).toArray(callback);
+}
+
+exports.getUserSongs = function(userName, callback) {
+    userSongs.aggregate([{
+            $match: {
+                userName: userName
+            }
+        },
+        {
+            $unwind: "$songs"
+        }, {
+            $lookup: {
+                from: "allSongs",
+                localField: "songs",
+                foreignField: "songName",
+                as: "songsData"
+            }
+        },
+        {
+            $group: {
+                _id: "$userName",
+                songs: {
+                    $push: "$songsData"
+                }
+            }
+        }
+    ], (e, o) => {
+        if (e) {
+            callback(e);
+        } else {
+            var result = o && (o.length > 0) && o[0] || {};
+            result.userName = result._id;
+            result.songs = _.flatten(result.songs);
+            callback(null, result);
+        }
+    });
 }
 
 exports.updateAccount = function(newData, callback) {
