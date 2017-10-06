@@ -100,6 +100,30 @@ exports.addNewSong = function(newData, callback) {
     });
 }
 
+exports.addSongToUser = function (userName, songName, callback) {
+    userSongs.findOne({userName: userName}, (e, o)=>{
+        if(e){
+            callback(e);
+        } else {
+            if(o == null){
+                userSongs.insert({
+                    userName: userName,
+                    songs: [songName]
+                }, callback);
+            } else {
+                userSongs.update({
+                    userName: userName
+                },
+                {
+                    $addToSet: {
+                        songs: songName
+                    }
+                }, callback);
+            }
+        }
+    });
+}
+
 exports.getAllSongs = function(query, callback) {
     allSongs.find(query).toArray(callback);
 }
