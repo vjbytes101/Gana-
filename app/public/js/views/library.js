@@ -1,5 +1,7 @@
 $(document).ready(function() {
 
+    var hc = new HomeController();
+    
     $(".addSongButton").click((x)=>{
         var $target = $(x.currentTarget);
         var songName = $target.data() || {};
