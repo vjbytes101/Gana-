@@ -9,9 +9,12 @@ block content
 					nav.navbar.navbar-default.navbar-fixed-top
 						.container
 							.navbar-header
-								.navbar-brand #{userName + "'s Songs"}
+								.navbar-brand #{"Your Songs"}
 							ul.nav.navbar-nav.navbar-right
 								li
+									.navbar-btn#btn-home.btn.btn-default
+										a(href="/library")
+											| Library
 									.navbar-btn#btn-home.btn.btn-default
 										a(href="/home")
 											| Home
