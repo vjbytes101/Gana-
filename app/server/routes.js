@@ -35,11 +35,42 @@ module.exports = function(app) {
             res.redirect('/');
         } else {
             var userName = req.session && req.session.user && req.session.user.name;
-            AM.getUserSongs(userName, (err, data) => {
+            /*AM.getUserSongs(userName, (err, data) => {
                 if (err) {
                     //do err handling
                 } else {
                     res.render('home', data);
+                }
+            });*/
+            res.render('home');
+        }
+    });
+    //search page//
+    app.get('/search', function(req, res) {
+        if (req.session.user == null) {
+            // if user is not logged-in redirect back to login page //
+            res.redirect('/');
+        } else {
+            var userName = req.session && req.session.user && req.session.user.name;
+            res.render('search');
+        }
+    });
+
+    app.post('/search', function(req, res) {
+        var userName = req.session.user;
+        //console.log(userName[0].uid);
+        if(userName[0] != null && userName[0].uid != null){
+            userName = userName[0].uid;
+        }
+        
+        if (req.session.user == null) {
+            res.redirect('/');
+        } else {
+            AM.searchKeyword(req.body['search'],userName, function(e,data) {
+                if (e) {
+                    res.status(400).send(e);
+                } else {
+                    res.render('search', { songData: JSON.stringify(data) });
                 }
             });
         }
@@ -136,6 +167,8 @@ module.exports = function(app) {
             name: req.body['name'],
             user: req.body['user'],
             pass: req.body['pass'],
+            city: req.body['city'],
+            email: req.body['email'],
         }, function(e) {
             if (e) {
                 res.status(400).send(e);

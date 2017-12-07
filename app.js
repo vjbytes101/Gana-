@@ -4,7 +4,8 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler');
 var cookieParser = require('cookie-parser');
-var MongoStore = require('connect-mongo')(session);
+var mysql = require('mysql');
+var MySQLStore = require('express-mysql-session')(session);
 
 var app = express();
 
@@ -18,24 +19,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('stylus').middleware({ src: __dirname + '/app/public' }));
 app.use(express.static(__dirname + '/app/public'));
 
-// build mongo database connection url //
+require('dotenv').load();
 
-var dbHost = process.env.DB_HOST || 'localhost'
-var dbPort = process.env.DB_PORT || 27017;
-var dbName = process.env.DB_NAME || 'nodeTest';
+var options = {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+};
 
-var dbURL = 'mongodb://' + dbHost + ':' + dbPort + '/' + dbName;
-if (app.get('env') == 'live') {
-    // prepend url with authentication credentials // 
-    dbURL = 'mongodb://' + process.env.DB_USER + ':' + process.env.DB_PASS + '@' + dbHost + ':' + dbPort + '/' + dbName;
-}
-
+var connection = mysql.createConnection(options);
 app.use(session({
-    secret: 'kjfoiwgjo4p39uu895jginjkn394t8hngijnklnhvrirnveijf3oij',
+    secret: process.env.SESSION_SECRET,
     proxy: true,
     resave: true,
     saveUninitialized: true,
-    store: new MongoStore({ url: dbURL })
+    store: new MySQLStore({}, connection)
 }));
 
 require('./app/server/routes')(app);

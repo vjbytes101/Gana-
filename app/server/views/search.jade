@@ -26,6 +26,12 @@ block content
 				br
 				br
 				br
+				h4 Search for an Artist, Song, Album or Playlist
+				form(method="post")
+					.form-group
+						input.form-control#search-tf(type='text', name='search', value='',placeholder="Search Tracks")
+						
+
 				div.table-responsive
 					table.table.table-striped
 						thead
@@ -34,12 +40,13 @@ block content
 								th Artist Name
 								th Album Name
 						tbody
-							//each item in songs
+							!{songData}
+							each item in !{songData}
 								tr
-									td= item.songName
+									td= item.stitle
 									td
-										a(href= '/artist?artistName=' + item.artistName)= item.artistName
-									td= item.albumName
+										a(href= '/artist?artistName=' + item.aname)= item.aname
+									td= item.sduration
 
 	include modals/alert
 	include modals/confirm

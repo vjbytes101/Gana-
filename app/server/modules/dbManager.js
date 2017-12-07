@@ -1,32 +1,47 @@
 var crypto = require('crypto');
-var MongoDB = require('mongodb').Db;
-var Server = require('mongodb').Server;
+var mysql = require('mysql');
 var moment = require('moment');
 var _ = require('lodash');
+var bcrypt = require('bcrypt');
 
-/*
-    ESTABLISH DATABASE CONNECTION
-*/
-
-var dbName = process.env.DB_NAME || 'nodeTest';
-var dbHost = process.env.DB_HOST || 'localhost'
-var dbPort = process.env.DB_PORT || 27017;
-
-var db = new MongoDB(dbName, new Server(dbHost, dbPort, { auto_reconnect: true }), { w: 1 });
-db.open(function(e, d) {
-    if (e) {
-        console.log(e);
-    } else {
-        console.log('mongo :: connected to database :: "' + dbName + '"');
-    }
+let host = process.env.DB_HOST;
+let port = process.env.DB_PORT;
+let user = process.env.DB_USER;
+let database =  process.env.DB_NAME;
+let password =  process.env.DB_PASSWORD;
+var db = mysql.createConnection({
+    host: host,
+    user: user,
+    password: password,
+    database: database
 });
 
-var accounts = db.collection('accounts');
-var allSongs = db.collection('allSongs');
-var userSongs = db.collection('userSongs');
+db.connect(function(err) {
+    if (err) {
+        console.error('error connecting: ' + err.stack);
+        return;
+    }
+
+    console.log('connected as id ' + db.threadId);
+});
+
+exports.searchKeyword = function(keyword,userName, callback) {
+    
+    db.query('call SearchTracks(?, ?)', [keyword, userName], function(err, results) { 
+        if (err) {
+            console.log(err);
+            //callback('username-taken');
+        }else{
+            callback(null, results[0]);
+        }
+    });
+}
+// var accounts = db.collection('accounts');
+// var allSongs = db.collection('allSongs');
+// var userSongs = db.collection('userSongs');
 
 /* login validation methods */
-
+/*
 exports.autoLogin = function(user, pass, callback) {
     accounts.findOne({ user: user }, function(e, o) {
         if (o) {
@@ -35,41 +50,46 @@ exports.autoLogin = function(user, pass, callback) {
             callback(null);
         }
     });
-}
+}*/
 
 exports.manualLogin = function(user, pass, callback) {
-    accounts.findOne({ user: user }, function(e, o) {
-        if (o == null) {
+    var query = "Select * from User where `uid`='" + user + "';";
+    db.query(query, (err, result)=>{
+        if(err){
             callback('user-not-found');
-        } else {
-            validatePassword(pass, o.pass, function(err, res) {
-                if (res) {
-                    callback(null, o);
-                } else {
-                    callback('invalid-password');
-                }
-            });
+        }else{
+            if(result.length>0){
+                validatePassword(pass, result[0].pass, function(err, res) {
+                    if (res) {
+                        callback(null, result);
+                    } else {
+                        callback('invalid-password');
+                    }
+                });
+            }
+            else{
+                callback('invalid-password');
+            }
         }
     });
 }
 
 /* record insertion, update & deletion methods */
 
-exports.addNewAccount = function(newData, callback) {
-    accounts.findOne({ user: newData.user }, function(e, o) {
-        if (o) {
+exports.addNewAccount = function(req, callback) {
+    
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(req.pass, salt);
+    db.query('call new_user(?, ?, ?,?,?)', [req.user, req.name, hash,req.city,req.email], function(err, results) { 
+        if (err) {
+            console.log(err);
             callback('username-taken');
-        } else {
-            saltAndHash(newData.pass, function(hash) {
-                newData.pass = hash;
-                // append date stamp when record was created //
-                newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
-                accounts.insert(newData, { safe: true }, callback);
-            });
+        }else{
+            callback(null, results);
         }
     });
 }
-
+/*
 exports.addNewSong = function(newData, callback) {
     allSongs.findOne({ songName: newData.songName, artistName: newData.artistName }, function(err, songData) {
         if (err) {
@@ -94,12 +114,12 @@ exports.addNewSong = function(newData, callback) {
     });
 }
 
-exports.addSongToUser = function (userName, songName, callback) {
-    userSongs.findOne({userName: userName}, (e, o)=>{
-        if(e){
+exports.addSongToUser = function(userName, songName, callback) {
+    userSongs.findOne({ userName: userName }, (e, o) => {
+        if (e) {
             callback(e);
         } else {
-            if(o == null){
+            if (o == null) {
                 userSongs.insert({
                     userName: userName,
                     songs: [songName]
@@ -107,8 +127,7 @@ exports.addSongToUser = function (userName, songName, callback) {
             } else {
                 userSongs.update({
                     userName: userName
-                },
-                {
+                }, {
                     $addToSet: {
                         songs: songName
                     }
@@ -179,7 +198,7 @@ exports.updateAccount = function(newData, callback) {
         }
     });
 }
-
+*/
 /* account lookup methods */
 
 exports.deleteAccount = function(id, callback) {
@@ -208,11 +227,17 @@ var saltAndHash = function(pass, callback) {
 }
 
 var validatePassword = function(plainPass, hashedPass, callback) {
-    var salt = hashedPass.substr(0, 10);
-    var validHash = salt + md5(plainPass + salt);
-    callback(null, hashedPass === validHash);
+    bcrypt.compare(plainPass, hashedPass, function(err, ress) {
+        if(ress){
+            callback(null, true);
+        }else{
+            callback(null, false);
+        }
+    });
 }
 
 var getObjectId = function(id) {
     return new require('mongodb').ObjectID(id);
 }
+
+

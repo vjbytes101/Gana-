@@ -15,6 +15,29 @@ input(type='hidden', value= user._id)#userId
 			label.control-label.col-sm-3 Username
 			.col-sm-9
 				input.form-control#user-tf(type='text', name='user', value= user.user).disabled
+		
+		.form-group
+			label.control-label.col-sm-3 Email
+			.col-sm-9
+				input.form-control#email-tf(type='email', name='email', value= user.email)
+		
+		.form-group
+			label.control-label.col-sm-3 City
+			.col-sm-9
+				select.form-control#city-tf(name = "city")
+					option(value="Select City") Select City
+					option(value="New York City") New York City
+					option(value="New Hamshire") New Hamshire
+					option(value="Seattle") Seattle
+					option(value="Boston") Boston
+					option(value="New Delhi") New Delhi
+					option(value="Washington") Washington
+					option(value="Syracuse") Syracuse
+					option(value="Austin") Austin
+					option(value="Lowell") Lowell
+				
+
+		
 
 		.form-group
 			label.control-label.col-sm-3 Password
