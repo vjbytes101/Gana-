@@ -27,12 +27,29 @@ block content
 				br
 				br
 				h4 Search for an Artist, Song, Album or Playlist
-				form(method="post")
-					.form-group
-						input.form-control#search-tf(type='text', name='search', value='',placeholder="Search Tracks")
-						
-
-				div.table-responsive
+				
+				input.form-control#search-tf(type='text', name='search', value='',placeholder="Search Tracks")
+				button(type='button')#search-btn1.btn.btn-default search
+				br
+				br
+				br
+				div#searchres
+				div#artist
+				//!{songData}
+				//br
+				//xef="/search/artist?key="+searchkey) Artist]	
+				//!{artistData}
+				br
+				//#[a(href="/search/track?key="+searchkey) Track]
+				//!{trackData}
+				//br
+				//#[a(href="/search/albums?key="+searchkey) Albums]
+				//!{albumData}
+				//br
+				//#[a(href="/search/playlist?key="+searchkey) Play List]
+				//!{playListData}
+				
+				//div.table-responsive
 					table.table.table-striped
 						thead
 							tr
@@ -55,5 +72,4 @@ block scripts
 	script(src='/vendor/jquery-2.2.3.min.js')
 	script(src='/vendor/jquery.form.min.js')
 	script(src='/vendor/bootstrap.min.js')
-	script(src='/js/views/home.js')
-	script(src='/js/controllers/homeController.js')
+	script(src='/js/views/search.js')

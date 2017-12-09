@@ -7,8 +7,8 @@ var bcrypt = require('bcrypt');
 let host = process.env.DB_HOST;
 let port = process.env.DB_PORT;
 let user = process.env.DB_USER;
-let database =  process.env.DB_NAME;
-let password =  process.env.DB_PASSWORD;
+let database = process.env.DB_NAME;
+let password = process.env.DB_PASSWORD;
 var db = mysql.createConnection({
     host: host,
     user: user,
@@ -25,219 +25,190 @@ db.connect(function(err) {
     console.log('connected as id ' + db.threadId);
 });
 
-exports.searchKeyword = function(keyword,userName, callback) {
-    
-    db.query('call SearchTracks(?, ?)', [keyword, userName], function(err, results) { 
-        if (err) {
-            console.log(err);
-            //callback('username-taken');
-        }else{
-            callback(null, results[0]);
-        }
-    });
-}
-// var accounts = db.collection('accounts');
-// var allSongs = db.collection('allSongs');
-// var userSongs = db.collection('userSongs');
-
-/* login validation methods */
-/*
-exports.autoLogin = function(user, pass, callback) {
-    accounts.findOne({ user: user }, function(e, o) {
-        if (o) {
-            o.pass == pass ? callback(o) : callback(null);
-        } else {
-            callback(null);
-        }
-    });
-}*/
-
-exports.manualLogin = function(user, pass, callback) {
-    var query = "Select * from User where `uid`='" + user + "';";
-    db.query(query, (err, result)=>{
-        if(err){
-            callback('user-not-found');
-        }else{
-            if(result.length>0){
-                validatePassword(pass, result[0].pass, function(err, res) {
-                    if (res) {
-                        callback(null, result);
-                    } else {
-                        callback('invalid-password');
-                    }
-                });
-            }
-            else{
-                callback('invalid-password');
-            }
-        }
-    });
-}
-
-/* record insertion, update & deletion methods */
-
-exports.addNewAccount = function(req, callback) {
-    
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(req.pass, salt);
-    db.query('call new_user(?, ?, ?,?,?)', [req.user, req.name, hash,req.city,req.email], function(err, results) { 
-        if (err) {
-            console.log(err);
-            callback('username-taken');
-        }else{
-            callback(null, results);
-        }
-    });
-}
-/*
-exports.addNewSong = function(newData, callback) {
-    allSongs.findOne({ songName: newData.songName, artistName: newData.artistName }, function(err, songData) {
-        if (err) {
-            callback(err);
-            console.log(err);
-        } else {
-            if (songData == null) {
-                allSongs.insert(newData, (e, o) => {
-                    if (e) {
-                        callback(e);
-                        console.log(err);
-                    } else {
-                        callback(null, "1");
-                        console.log("song added in db");
-                    }
-                });
+exports.manualLogin = function(user, pass) {
+    return new Promise((resolve, reject) => {
+        var query = "Select * from User where `uid`='" + user + "';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject('user-not-found');
             } else {
-                callback(null, "2");
-                console.log("song already exist in db");
-            }
-        }
-    });
-}
-
-exports.addSongToUser = function(userName, songName, callback) {
-    userSongs.findOne({ userName: userName }, (e, o) => {
-        if (e) {
-            callback(e);
-        } else {
-            if (o == null) {
-                userSongs.insert({
-                    userName: userName,
-                    songs: [songName]
-                }, callback);
-            } else {
-                userSongs.update({
-                    userName: userName
-                }, {
-                    $addToSet: {
-                        songs: songName
-                    }
-                }, callback);
-            }
-        }
-    });
-}
-
-exports.getAllSongs = function(query, callback) {
-    allSongs.find(query).toArray(callback);
-}
-
-exports.getUserSongs = function(userName, callback) {
-    userSongs.aggregate([{
-            $match: {
-                userName: userName
-            }
-        },
-        {
-            $unwind: "$songs"
-        }, {
-            $lookup: {
-                from: "allSongs",
-                localField: "songs",
-                foreignField: "songName",
-                as: "songsData"
-            }
-        },
-        {
-            $group: {
-                _id: "$userName",
-                songs: {
-                    $push: "$songsData"
+                if (result.length > 0) {
+                    validatePassword(pass, result[0].pass, function(err, res) {
+                        if (res) {
+                            resolve(result);
+                        } else {
+                            reject('invalid-password');
+                        }
+                    });
+                } else {
+                    reject('user-not-found');
                 }
             }
-        }
-    ], (e, o) => {
-        if (e) {
-            callback(e);
-        } else {
-            var result = o && (o.length > 0) && o[0] || {};
-            result.userName = result._id;
-            result.songs = _.flatten(result.songs);
-            callback(null, result);
-        }
+        });
     });
 }
 
-exports.updateAccount = function(newData, callback) {
-    accounts.findOne({ _id: getObjectId(newData.id) }, function(e, o) {
-        o.name = newData.name;
-        o.email = newData.email;
-        o.country = newData.country;
-        if (newData.pass == '') {
-            accounts.save(o, { safe: true }, function(e) {
-                if (e) callback(e);
-                else callback(null, o);
-            });
-        } else {
-            saltAndHash(newData.pass, function(hash) {
-                o.pass = hash;
-                accounts.save(o, { safe: true }, function(e) {
-                    if (e) callback(e);
-                    else callback(null, o);
-                });
-            });
-        }
+exports.addNewAccount = function(req) {
+    return new Promise((resolve, reject) => {
+        var salt = bcrypt.genSaltSync(10);
+        var hash = bcrypt.hashSync(req.pass, salt);
+        db.query('call new_user(?, ?, ?,?,?)', [req.user, req.name, hash, req.city, req.email], function(err, results) {
+            if (err) {
+                reject('username-taken');
+            } else {
+                resolve(results);
+            }
+        });
     });
 }
-*/
-/* account lookup methods */
 
-exports.deleteAccount = function(id, callback) {
-    accounts.remove({ _id: getObjectId(id) }, callback);
+exports.searchKeyword = function(keyword, userName) {
+    return new Promise((resolve, reject) => {
+        db.query('call SearchTracks(?, ?)', [keyword, userName], function(err, results) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results[0]);
+            }
+        });
+    });
 }
 
-/* private encryption & validation methods */
+exports.searchAlbumKeyword = function(keyword) {
+    return new Promise((resolve, reject) => {
+        var query = "select abid, abtitle from album where abtitle like '%" + keyword + "%';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
 
-var generateSalt = function() {
-    var set = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
-    var salt = '';
-    for (var i = 0; i < 10; i++) {
-        var p = Math.floor(Math.random() * set.length);
-        salt += set[p];
-    }
-    return salt;
 }
 
-var md5 = function(str) {
-    return crypto.createHash('md5').update(str).digest('hex');
+exports.searchTrackKeyword = function(keyword) {
+    return new Promise((resolve, reject) => {
+        var query = "select sid, stitle from songs where stitle like '%" + keyword + "%';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
 }
 
-var saltAndHash = function(pass, callback) {
-    var salt = generateSalt();
-    callback(salt + md5(pass + salt));
+exports.searchArtistKeyword = function(keyword) {
+    return new Promise((resolve, reject) => {
+        var query = "select aid, aname from artist where aname like '%" + keyword + "%';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+
+}
+
+exports.searchPlayListKeyword = function(keyword) {
+    return new Promise((resolve, reject) => {
+        var query = "select pid, ptitle from playlist where ptype = 'public' and ptitle like '%" + keyword + "%';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.searchPlays = function(key, keyVal) {
+    return new Promise((resolve, reject) => {
+        var query = '';
+        if (key == 'sid' || key == 'tid') {
+            query = "select s.sid,stitle, sduration, aname from songs s join artist a on s.aid = a.aid where s.sid='" + keyVal + "';";
+        } else if (key == 'aid') {
+            query = "select s.sid,stitle, sduration,a.aid, aname,s.reldate from songs s join artist a on s.aid = a.aid where a.aid='" + keyVal + "' LIMIT 40;";
+        } else if (key == 'abid') {
+            query = "select s.sid,stitle, sduration,abtitle, aname from songs s join Artist a on a.aid = s.aid join albumsong absg on absg.sid = s.sid join album ab on ab.abid = absg.abid  where ab.abid='" + keyVal + "';";
+        } else if (key == 'pid') {
+            query = "select p.pid,s.sid,stitle,sduration,ptitle, aname from playlist p join pltrack ps on p.pid = ps.pid join songs s on s.sid = ps.sid join artist a on a.aid = s.aid where p.ptype = 'public' and p.pid='" + keyVal + "';";
+        } else if (key == 'pidc') {
+            query = "select p.pid,s.sid,stitle,sduration,ptitle, aname from playlist p join pltrack ps on p.pid = ps.pid join songs s on s.sid = ps.sid join artist a on a.aid = s.aid where p.pid='" + keyVal + "';";
+        }
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.getPlayListKeyword = function(username) {
+    return new Promise((resolve, reject) => {
+        var query = "select pid,ptitle, ptype from playlist where uid = '" + username + "';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.addNewPlaylist = function(uid, name, type) {
+    return new Promise((resolve, reject) => {
+        db.query('call new_playlist(?,?, ?)', [uid, name, type], function(err, results) {
+            if (err) {
+                reject('insert-failed');
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+exports.getMostRecentPlayList = function() {
+    return new Promise((resolve, reject) => {
+        var query = "select pid,ptitle, ptype from playlist where ptype = 'public' order by preldt desc LIMIT 5;";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.searchRecentAlbum = function() {
+    return new Promise((resolve, reject) => {
+        var query = "select abid, abtitle from album LIMIT 5;";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
 }
 
 var validatePassword = function(plainPass, hashedPass, callback) {
     bcrypt.compare(plainPass, hashedPass, function(err, ress) {
-        if(ress){
+        if (ress) {
             callback(null, true);
-        }else{
+        } else {
             callback(null, false);
         }
     });
 }
-
-var getObjectId = function(id) {
-    return new require('mongodb').ObjectID(id);
-}
-
-
