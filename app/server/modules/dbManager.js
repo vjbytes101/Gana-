@@ -132,15 +132,15 @@ exports.searchPlays = function(key, keyVal) {
     return new Promise((resolve, reject) => {
         var query = '';
         if (key == 'sid' || key == 'tid') {
-            query = "select s.sid,stitle, sduration, aname from songs s join artist a on s.aid = a.aid where s.sid='" + keyVal + "';";
+            query = "select s.sid, s.stitle, s.sduration, a.aname from songs s, artist a where s.aid = a.aid and s.sid='" + keyVal + "';";
         } else if (key == 'aid') {
-            query = "select s.sid,stitle, sduration,a.aid, aname from songs s join artist a on s.aid = a.aid where a.aid='" + keyVal + "' LIMIT 40;";
+            query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid='" + keyVal + "' LIMIT 40;";
         } else if (key == 'abid') {
-            query = "select s.sid,stitle, sduration,abtitle, aname from songs s join Artist a on a.aid = s.aid join albumsong absg on absg.sid = s.sid join album ab on ab.abid = absg.abid  where ab.abid='" + keyVal + "';";
+            query = "select s.sid, s.stitle, s.sduration, ab.abtitle, a.aname from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid='" + keyVal + "';";
         } else if (key == 'pid') {
-            query = "select p.pid,s.sid,stitle,sduration,ptitle, aname from playlist p join pltrack ps on p.pid = ps.pid join songs s on s.sid = ps.sid join artist a on a.aid = s.aid where p.ptype = 'public' and p.pid='" + keyVal + "';";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid='" + keyVal + "';";
         } else if (key == 'pidc') {
-            query = "select p.pid,s.sid,stitle,sduration,ptitle, aname from playlist p join pltrack ps on p.pid = ps.pid join songs s on s.sid = ps.sid join artist a on a.aid = s.aid where p.pid='" + keyVal + "';";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.pid='" + keyVal + "';";
         }
         db.query(query, (err, result) => {
             if (err) {
