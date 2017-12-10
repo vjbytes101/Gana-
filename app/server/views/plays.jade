@@ -35,6 +35,7 @@ block content
 				br
 				br
 				br
+				div.spotify-player
 				if SongSearch
 					div.table-responsive
 						table.table.table-striped
@@ -51,7 +52,10 @@ block content
 											a(href= '/artist?artistName=' + item.sid)= item.sname
 										td= item.aname
 										td
-											#[a(href="#" id="play") Play]	#[a(href="#" id="rate") Rate]
+											span(class="js-play-song" data-trackid=item.sid) Play
+										td
+											input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
+
 				if PlayList
 					if PlayList.length > 0
 						br
@@ -77,7 +81,9 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												#[a(href="#" id="play") Play]
+												span(class="js-play-song" data-trackid=item.sid) Play
+											td
+												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
 					else 
 						div.nav 
 							p 0 songs in this PlayList
@@ -105,7 +111,9 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												#[a(href="#" id="play") Play]
+												span(class="js-play-song" data-trackid=item.sid) Play
+											td
+												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
 					else 
 						div.nav 
 							p 0 songs in this album
@@ -132,7 +140,9 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												#[a(href="#" id="play") Play]   #[a(href="#" id="rate") Rate]
+												span(class="js-play-song" data-trackid=item.sid) Play
+											td
+												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
 					else 
 						div.nav 
 							p Something went wrong please try again....
@@ -145,7 +155,7 @@ block content
 							br
 							!{ArtistSearch.length} Songs(Most recent songs)
 							br
-							a(href="#" id='!{ArtistSearch[0].aid}') Like
+							span(id='!{ArtistSearch[0].aid}' data-aid=ArtistSearch[0].aid data-state="") Like
 						br
 						div.table-responsive
 							table.table.table-striped
@@ -162,7 +172,9 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												#[a(href="#" id="play") Play]
+												span(class="js-play-song" data-trackid=item.sid) Play
+											td
+												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
 					else 
 						div.nav 
 							p 0 song for this artist
@@ -174,6 +186,6 @@ block scripts
 	script(src='/vendor/jquery-2.2.3.min.js')
 	script(src='/vendor/jquery.form.min.js')
 	script(src='/vendor/bootstrap.min.js')
-	script(src='/js/views/home.js')
-	script(src='/js/controllers/homeController.js')
+	script(src='/vendor/rating.js')
+	script(src='/js/views/plays.js')
 	link(href='/css/style1.css', rel='stylesheet')

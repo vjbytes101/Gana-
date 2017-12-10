@@ -220,6 +220,39 @@ module.exports = function(app) {
         });
     });
 
+    app.post('/rating', function(req, res){
+        var uid = req.session.user && req.session.user[0].uid;
+        var sid = req.body.sid;
+        var rating = req.body.rating;
+        if(uid && sid && rating){
+            AM.addRating(uid, sid, rating).then(()=>{
+                res.status(200).send("success");
+            }).catch(err=>{
+                console.log("error in add rating post method");
+                res.status(500).send(err);
+            })
+        } else {
+            console.log("error in post rating method incomplete fields");
+            res.status(400).send('sid or rating not found');
+        }
+    });
+
+    app.post('/like-artist', function(req, res){
+        var uid = req.session.user && req.session.user[0].uid;
+        var aid = req.body.aid;
+        if(uid && aid){
+            AM.addArtistLikes(uid, aid).then(()=>{
+                res.status(200).send("success");
+            }).catch(err=>{
+                console.log("error in add artist like post method");
+                res.status(500).send(err);
+            })
+        } else {
+            console.log("error in post artist like method incomplete fields");
+            res.status(400).send('sid or rating not found');
+        }
+    });
+
     app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found' }); });
 
 };

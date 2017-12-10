@@ -35,10 +35,10 @@ block content
 				br
 
 				div.nav
-					#[a(href="#" id="topres") Top Result]	
-					#[a(href="#" id="artist") Artist]     
-					#[a(href="#" id="track") Tracks]     
-					#[a(href="#" id="album") Album]       
+					#[a(href="#" id="topres") Top Result]
+					#[a(href="#" id="artist") Artist]
+					#[a(href="#" id="track") Tracks]
+					#[a(href="#" id="album") Album]
 					#[a(href="#" id="playlist") PlayList]
 				br
 				div#searchres
@@ -46,30 +46,6 @@ block content
 				div#trackres
 				div#albumres
 				div#plres
-				//#[a(href="/search/track?key="+searchkey) Track]
-				//!{trackData}
-				//br
-				//#[a(href="/search/albums?key="+searchkey) Albums]
-				//!{albumData}
-				//br
-				//#[a(href="/search/playlist?key="+searchkey) Play List]
-				//!{playListData}
-				
-				//div.table-responsive
-					table.table.table-striped
-						thead
-							tr
-								th Song Name
-								th Artist Name
-								th Album Name
-						tbody
-							!{songData}
-							each item in !{songData}
-								tr
-									td= item.stitle
-									td
-										a(href= '/artist?artistName=' + item.aname)= item.aname
-									td= item.sduration
 
 	include modals/alert
 	include modals/confirm

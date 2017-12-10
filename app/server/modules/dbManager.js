@@ -213,4 +213,28 @@ var validatePassword = function(plainPass, hashedPass, callback) {
     });
 }
 
+exports.addRating = function(uid, sid, rating) {
+    return new Promise((resolve, reject) => {
+        var query = "INSERT INTO rating (`uid`, `sid`, `rating`, `rdate`) VALUES('" + uid + "', '" + sid + "', " + rating +", NOW()) ON DUPLICATE KEY UPDATE rating="+ rating +", rdate=NOW();";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
 
+exports.addArtistLikes = function(uid, aid) {
+    return new Promise((resolve, reject) => {
+        var query = "INSERT INTO Likes (`uid`, `aid`, `likedt`) VALUES('" + uid + "', '" + aid + ", NOW()) ON DUPLICATE KEY UPDATE likedt=NOW();";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
