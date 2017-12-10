@@ -54,7 +54,7 @@ block content
 										td
 											span(class="js-play-song" data-trackid=item.sid) Play
 										td
-											input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
+											input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 
 				if PlayList
 					if PlayList.length > 0
@@ -83,7 +83,7 @@ block content
 											td
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
-												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
+												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 					else 
 						div.nav 
 							p 0 songs in this PlayList
@@ -113,7 +113,7 @@ block content
 											td
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
-												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
+												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 					else 
 						div.nav 
 							p 0 songs in this album
@@ -142,7 +142,7 @@ block content
 											td
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
-												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
+												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 					else 
 						div.nav 
 							p Something went wrong please try again....
@@ -155,7 +155,7 @@ block content
 							br
 							!{ArtistSearch.length} Songs(Most recent songs)
 							br
-							span(id='!{ArtistSearch[0].aid}' data-aid=ArtistSearch[0].aid data-state="") Like
+							span(id='artist-like' data-aid=ArtistSearch[0].aid)
 						br
 						div.table-responsive
 							table.table.table-striped
@@ -174,7 +174,7 @@ block content
 											td
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
-												input(type="number" name="song-rating" class="rating js-rating" data-trackid=item.sid)
+												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 					else 
 						div.nav 
 							p 0 song for this artist

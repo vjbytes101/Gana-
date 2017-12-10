@@ -120,8 +120,8 @@ module.exports = function(app) {
             // if user is not logged-in redirect back to login page //
             res.redirect('/');
         } else {
-            var userName = req.session && req.session.user && req.session.user.name;
-            AM.searchPlays(key, keyVal).then(function(sres) {
+            var uid = req.session.user && req.session.user[0].uid;
+            AM.searchPlays(key, keyVal, uid).then(function(sres) {
                 var searchRes = JSON.stringify(sres);
                 var finalsRes = JSON.parse(searchRes);
                 finalObject.SongSearch = finalsRes;
@@ -194,12 +194,12 @@ module.exports = function(app) {
         } else {
             var userName = req.session && req.session.user && req.session.user.name;
             var indicator = false;
-            if(key != null && key != undefined && key.length > 0){
+            if (key != null && key != undefined && key.length > 0) {
                 indicator = true;
-            }else{
+            } else {
                 indicator = false;
             }
-            res.render('createplaylist',{indicator:indicator});
+            res.render('createplaylist', { indicator: indicator });
         }
     });
 
@@ -213,7 +213,7 @@ module.exports = function(app) {
         var type = req.body.type;
         var Qtype = req.body.Qtype;
         var plid = req.body.urlKey;
-        AM.addNewPlaylist(uid, name, type,Qtype,plid).then(function() {
+        AM.addNewPlaylist(uid, name, type, Qtype, plid).then(function() {
             res.status(200).send('ok');
         }).then(err => {
             res.status(500).send(err);
@@ -247,14 +247,14 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/rating', function(req, res){
+    app.post('/rating', function(req, res) {
         var uid = req.session.user && req.session.user[0].uid;
         var sid = req.body.sid;
         var rating = req.body.rating;
-        if(uid && sid && rating){
-            AM.addRating(uid, sid, rating).then(()=>{
+        if (uid && sid && rating) {
+            AM.addRating(uid, sid, rating).then(() => {
                 res.status(200).send("success");
-            }).catch(err=>{
+            }).catch(err => {
                 console.log("error in add rating post method");
                 res.status(500).send(err);
             })
@@ -264,19 +264,46 @@ module.exports = function(app) {
         }
     });
 
-    app.post('/like-artist', function(req, res){
+    app.post('/like-artist', function(req, res) {
         var uid = req.session.user && req.session.user[0].uid;
         var aid = req.body.aid;
-        if(uid && aid){
-            AM.addArtistLikes(uid, aid).then(()=>{
-                res.status(200).send("success");
-            }).catch(err=>{
-                console.log("error in add artist like post method");
-                res.status(500).send(err);
-            })
+        var like = parseInt(req.body.like);
+        if (uid && aid) {
+            if (like) {
+                AM.addArtistLikes(uid, aid).then((data) => {
+                    res.status(200).send("Unlike");
+                }).catch(err => {
+                    console.log("error in add artist like post method");
+                    res.status(500).send(err);
+                });
+            } else {
+                AM.deleteArtistLikes(uid, aid).then((data) => {
+                    res.status(200).send("Like");
+                }).catch(err => {
+                    console.log("error in delete artist like post method");
+                    res.status(500).send(err);
+                });
+            }
         } else {
             console.log("error in post artist like method incomplete fields");
             res.status(400).send('sid or rating not found');
+        }
+    });
+
+    app.post('/check-like', function(req, res) {
+        var uid = req.session.user && req.session.user[0].uid;
+        var aid = req.body.aid;
+        console.log(req.body, uid)
+        if (uid && aid) {
+            AM.checkArtistLikes(uid, aid).then((data) => {
+                res.status(200).send(data);
+            }).catch(err => {
+                console.log("error in check artist like get method");
+                res.status(500).send(err);
+            })
+        } else {
+            console.log("error in get artist like method incomplete fields");
+            res.status(400).send('aid or uid not found');
         }
     });
 

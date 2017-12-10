@@ -128,20 +128,21 @@ exports.searchPlayListKeyword = function(keyword) {
     });
 }
 
-exports.searchPlays = function(key, keyVal) {
+exports.searchPlays = function(key, keyVal, uid) {
     return new Promise((resolve, reject) => {
         var query = '';
         if (key == 'sid' || key == 'tid') {
-            query = "select s.sid, s.stitle, s.sduration, a.aname from songs s, artist a where s.aid = a.aid and s.sid='" + keyVal + "';";
+            query = "select s.sid, s.stitle, s.sduration, a.aname from songs s, artist a where s.aid = a.aid and s.sid='" + keyVal + "'";
         } else if (key == 'aid') {
-            query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid='" + keyVal + "' LIMIT 40;";
+            query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid='" + keyVal + "'";
         } else if (key == 'abid') {
-            query = "select s.sid, s.stitle, s.sduration, ab.abtitle, a.aname from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid='" + keyVal + "';";
+            query = "select s.sid, s.stitle, s.sduration, ab.abtitle, a.aname from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid='" + keyVal + "'";
         } else if (key == 'pid') {
-            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid='" + keyVal + "';";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid='" + keyVal + "'";
         } else if (key == 'pidc') {
-            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.pid='" + keyVal + "';";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.pid='" + keyVal + "'";
         }
+        query = "select t.*, r.rating from (" + query + ") as t left outer join (select sid,rating from rating r where uid='" + uid + "')as r on t.sid = r.sid;";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -256,7 +257,33 @@ exports.addRating = function(uid, sid, rating) {
 
 exports.addArtistLikes = function(uid, aid) {
     return new Promise((resolve, reject) => {
-        var query = "INSERT INTO Likes (`uid`, `aid`, `likedt`) VALUES('" + uid + "', '" + aid + ", NOW()) ON DUPLICATE KEY UPDATE likedt=NOW();";
+        var query = "INSERT INTO Likes (`uid`, `aid`, `likedt`) VALUES('" + uid + "', '" + aid + "', NOW()) ON DUPLICATE KEY UPDATE likedt=NOW();";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.deleteArtistLikes = function(uid, aid) {
+    return new Promise((resolve, reject) => {
+        var query = "DELETE FROM Likes WHERE uid='" + uid + "' and aid='"+ aid + "';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.checkArtistLikes = function(uid, aid) {
+    return new Promise((resolve, reject) => {
+        var query = "select * from Likes where uid='" + uid + "' and aid = '" + aid + "';";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
