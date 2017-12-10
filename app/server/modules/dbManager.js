@@ -165,15 +165,43 @@ exports.getPlayListKeyword = function(username) {
     });
 }
 
-exports.addNewPlaylist = function(uid, name, type) {
+exports.deletePlayList = function(pid) {
     return new Promise((resolve, reject) => {
-        db.query('call new_playlist(?,?, ?)', [uid, name, type], function(err, results) {
+        db.query('call delete_playlist(?)', [pid], function(err, results) {
+            console.log(pid);
             if (err) {
-                reject('insert-failed');
+                reject('delete-failed');
             } else {
                 resolve(results);
             }
         });
+    });
+}
+
+exports.addNewPlaylist = function(uid, name, type,Qtype,plid) {
+    return new Promise((resolve, reject) => {
+        if(Qtype == 'update'){
+            console.log(plid);
+            console.log(name);
+            console.log(name);
+            console.log(type);
+            console.log(Qtype);
+            db.query('call update_playlist(?,?, ?)', [plid, name, type], function(err, results) {
+                if (err) {
+                    reject('insert-failed');
+                } else {
+                    resolve(results);
+                }
+            });
+        }else{
+            db.query('call new_playlist(?,?, ?)', [uid, name, type], function(err, results) {
+                if (err) {
+                    reject('insert-failed');
+                } else {
+                    resolve(results);
+                }
+            });
+        }
     });
 }
 

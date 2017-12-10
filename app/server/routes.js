@@ -168,13 +168,38 @@ module.exports = function(app) {
         }
     });
 
+    app.post('/addplaylist', function(req, res) {
+        if (req.session.user == null) {
+            // if user is not logged-in redirect back to login page //
+            res.redirect('/');
+        } else {
+            var delKey = req.body.key;
+            console.log(delKey);
+            AM.deletePlayList(delKey).then(function(plres) {
+                res.send("success");
+            }).then(err => {
+                res.status(500).send(err);
+            });
+        }
+    });
+
     app.get('/createplaylist', function(req, res) {
+        var url = require('url');
+        var url_parts = url.parse(req.url, true);
+        var query = url_parts.query;
+        var key = query.key;
         if (req.session.user == null) {
             // if user is not logged-in redirect back to login page //
             res.redirect('/');
         } else {
             var userName = req.session && req.session.user && req.session.user.name;
-            res.render('createplaylist');
+            var indicator = false;
+            if(key != null && key != undefined && key.length > 0){
+                indicator = true;
+            }else{
+                indicator = false;
+            }
+            res.render('createplaylist',{indicator:indicator});
         }
     });
 
@@ -186,7 +211,9 @@ module.exports = function(app) {
         }
         var name = req.body.key;
         var type = req.body.type;
-        AM.addNewPlaylist(uid, name, type).then(function() {
+        var Qtype = req.body.Qtype;
+        var plid = req.body.urlKey;
+        AM.addNewPlaylist(uid, name, type,Qtype,plid).then(function() {
             res.status(200).send('ok');
         }).then(err => {
             res.status(500).send(err);
