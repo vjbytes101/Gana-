@@ -49,7 +49,7 @@ block content
 												a(href= '/plays?key=pidc&val=' + item.pid)= item.ptitle 
 											td=item.ptype
 											td
-												#[a(href="#" id="edit") Edit]	#[a(href="#" id="delete") Delete]
+												#[a(href="/createplaylist?key="  + item.pid) Edit]	#[a( id=item.pid href="#" + item.pid).del Delete]
 					else 
 						div.nav 
 							p 0 PlayList for this User.
@@ -61,6 +61,5 @@ block scripts
 	script(src='/vendor/jquery-2.2.3.min.js')
 	script(src='/vendor/jquery.form.min.js')
 	script(src='/vendor/bootstrap.min.js')
-	script(src='/js/views/home.js')
-	script(src='/js/controllers/homeController.js')
+	script(src='/js/views/createpl.js')
 	link(href='/css/style1.css', rel='stylesheet')

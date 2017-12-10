@@ -26,8 +26,10 @@ block content
 				br
 				br
 				br
-
-	include creatplmodel
+	if indicator
+		include editplmode		
+	else
+		include creatplmodel
 	include modals/alert
 
 block scripts
