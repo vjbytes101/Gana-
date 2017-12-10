@@ -4,11 +4,11 @@ var moment = require('moment');
 var _ = require('lodash');
 var bcrypt = require('bcrypt');
 
-let host = process.env.DB_HOST;
-let port = process.env.DB_PORT;
-let user = process.env.DB_USER;
-let database = process.env.DB_NAME;
-let password = process.env.DB_PASSWORD;
+let host = process.env.DB_HOST || 'localhost';
+let port = process.env.DB_PORT || '3306';
+let user = process.env.DB_USER || 'root';
+let database = process.env.DB_NAME || 'project2';
+let password = process.env.DB_PASSWORD || 'root';
 var db = mysql.createConnection({
     host: host,
     user: user,
