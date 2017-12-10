@@ -31,7 +31,7 @@ var options = {
 
 var connection = mysql.createConnection(options);
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'kjhjhgvhvhgvgfh',
     proxy: true,
     resave: true,
     saveUninitialized: true,
