@@ -134,7 +134,7 @@ exports.searchPlays = function(key, keyVal) {
         if (key == 'sid' || key == 'tid') {
             query = "select s.sid,stitle, sduration, aname from songs s join artist a on s.aid = a.aid where s.sid='" + keyVal + "';";
         } else if (key == 'aid') {
-            query = "select s.sid,stitle, sduration,a.aid, aname,s.reldate from songs s join artist a on s.aid = a.aid where a.aid='" + keyVal + "' LIMIT 40;";
+            query = "select s.sid,stitle, sduration,a.aid, aname from songs s join artist a on s.aid = a.aid where a.aid='" + keyVal + "' LIMIT 40;";
         } else if (key == 'abid') {
             query = "select s.sid,stitle, sduration,abtitle, aname from songs s join Artist a on a.aid = s.aid join albumsong absg on absg.sid = s.sid join album ab on ab.abid = absg.abid  where ab.abid='" + keyVal + "';";
         } else if (key == 'pid') {
@@ -212,3 +212,5 @@ var validatePassword = function(plainPass, hashedPass, callback) {
         }
     });
 }
+
+

@@ -9,15 +9,16 @@ block content
 					nav.navbar.navbar-default.navbar-fixed-top
 						.container
 							.navbar-header
-								.navbar-brand #{"Your PlayList"}
+								.navbar-brand
+									h4 GANA
 							ul.nav.navbar-nav.navbar-right
 								li
 									.navbar-btn#btn-home.btn.btn-default
 										a(href="/home")
-											| PlayList
+											| Home
 									.navbar-btn#btn-home.btn.btn-default
-										a(href="/home")
-											| Albums
+										a(href="/addplaylist")
+											| My PlayList
 									.navbar-btn#search-home.btn.btn-default
 										a(href="/search")
 											| Search songs
@@ -32,14 +33,19 @@ block content
 				button(type='button')#search-btn1.btn.btn-default search
 				br
 				br
+
+				div.nav
+					#[a(href="#" id="topres") Top Result]	
+					#[a(href="#" id="artist") Artist]     
+					#[a(href="#" id="track") Tracks]     
+					#[a(href="#" id="album") Album]       
+					#[a(href="#" id="playlist") PlayList]
 				br
 				div#searchres
-				div#artist
-				//!{songData}
-				//br
-				//xef="/search/artist?key="+searchkey) Artist]	
-				//!{artistData}
-				br
+				div#artistres
+				div#trackres
+				div#albumres
+				div#plres
 				//#[a(href="/search/track?key="+searchkey) Track]
 				//!{trackData}
 				//br
@@ -73,3 +79,6 @@ block scripts
 	script(src='/vendor/jquery.form.min.js')
 	script(src='/vendor/bootstrap.min.js')
 	script(src='/js/views/search.js')
+	script(src='/js/views/home.js')
+	script(src='/js/controllers/homeController.js')
+	link(href='/css/style1.css', rel='stylesheet')

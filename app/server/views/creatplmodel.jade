@@ -1,0 +1,21 @@
+// preset form values if we receive a userdata object //
+- user = typeof(udata) != 'undefined' ? udata : { }
+input(type='hidden', value= user._id)#userId
+#account-form-container.center-vertical
+	div#account-form.form-horizontal.well
+		h2 Create Playlist
+		hr
+		.form-group
+			label.control-label.col-sm-3 PlayList Name
+			.col-sm-9
+				input.form-control#plname-tf(type='text', name='name', value= '')
+		.form-group
+			label.control-label.col-sm-3 PlayList Type
+			.col-sm-9
+				select.form-control#pltype-tf(name = "type")
+					option(value="Public") Public
+					option(value="Private") Private
+		hr
+		.form-buttons
+			button(type='submit')#createpl.btn.btn-primary Submit
+		.clearfix

@@ -9,15 +9,16 @@ block content
 					nav.navbar.navbar-default.navbar-fixed-top
 						.container
 							.navbar-header
-								.navbar-brand #{"Your PlayList"}
+								.navbar-brand
+									h4 GANA
 							ul.nav.navbar-nav.navbar-right
 								li
 									.navbar-btn#btn-home.btn.btn-default
 										a(href="/home")
-											| PlayList
+											| Home
 									.navbar-btn#btn-home.btn.btn-default
-										a(href="/home")
-											| Albums
+										a(href="/addplaylist")
+											| My PlayList
 									.navbar-btn#search-home.btn.btn-default
 										a(href="/search")
 											| Search songs
@@ -26,21 +27,37 @@ block content
 				br
 				br
 				br
-				div.table-responsive
-					table.table.table-striped
-						thead
-							tr
-								th Song Name
-								th Artist Name
-								th Album Name
-						tbody
-							//each item in songs
-								tr
-									td= item.songName
-									td
-										a(href= '/artist?artistName=' + item.artistName)= item.artistName
-									td= item.albumName
-
+				if recentPlaylist
+					if recentPlaylist.length>0
+						h4 MOST PLAYLIST
+						br
+						div.table-responsive
+							table.table.table-striped
+								thead
+									tr
+										th PlayList Name
+										th Type
+								tbody
+									each item in recentPlaylist
+										tr
+											td
+												a(href= '/plays?key=pidc&val=' + item.pid)= item.ptitle 
+											td=item.ptype
+				
+					if ABRecent
+						if ABRecent.length>0
+							h4 MOST ALBUMS
+							br
+							div.table-responsive
+								table.table.table-striped
+									thead
+										tr
+											th Album Name
+									tbody
+										each item in ABRecent
+											tr
+												td
+													a(href= '/plays?key=abid&val=' + item.abid)= item.abtitle 
 	include modals/alert
 	include modals/confirm
 

@@ -1,0 +1,21 @@
+.pl{
+    text-align: center;
+}
+.nav{
+    text-align: center;
+}
+#topres{
+    padding-right: 10px;
+}
+#artist{
+    padding-right: 10px;
+}
+#track{
+    padding-right: 10px;
+}
+#album{
+    padding-right: 10px;
+}
+.createpl{
+    float: right;
+}

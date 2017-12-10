@@ -1,0 +1,179 @@
+
+extends layout
+
+block content
+	div.container-fluid
+		div.row
+			main.col-sm-9.ml-sm-auto.col-md-10.pt-3
+				section.row.text-center.placeholders
+					nav.navbar.navbar-default.navbar-fixed-top
+						.container
+							.navbar-header
+								.navbar-brand
+									if PlayList
+										h4 PLAYLIST
+									if SongSearch || TrackSearch
+										h4 TRACKS
+									if AlbumSearch
+										h4 ALBUMS
+									if ArtistSearch
+										h4 ARTIST
+							ul.nav.navbar-nav.navbar-right
+								li
+									.navbar-btn#btn-home.btn.btn-default
+										a(href="/home")
+											| Home
+									.navbar-btn#btn-home.btn.btn-default
+										a(href="/addplaylist")
+											| My PlayList
+									.navbar-btn#search-home.btn.btn-default
+										a(href="/search")
+											| Search songs
+									.navbar-btn#btn-logout.btn.btn-default
+										| Sign Out
+					
+				br
+				br
+				br
+				if SongSearch
+					div.table-responsive
+						table.table.table-striped
+							thead
+								tr
+									th Song Name
+									th Artist Name
+									th 
+							tbody
+								each item in SongSearch
+									tr
+										td= item.stitle
+										//td
+											a(href= '/artist?artistName=' + item.sid)= item.sname
+										td= item.aname
+										td
+											#[a(href="#" id="play") Play]	#[a(href="#" id="rate") Rate]
+				if PlayList
+					if PlayList.length > 0
+						br
+						div.pl
+							b !{PlayList[0].ptitle}
+							br
+							!{PlayList.length} Songs
+							br
+							a(href="#" id='!{PlayList[0].pid}') Follow
+						br
+						div.table-responsive
+							table.table.table-striped
+								thead
+									tr
+										th Song Name
+										th Artist Name
+										th Duration
+										th 
+								tbody
+									each item in PlayList
+										tr
+											td= item.stitle
+											td= item.aname
+											td= item.sduration
+											td
+												#[a(href="#" id="play") Play]
+					else 
+						div.nav 
+							p 0 songs in this PlayList
+
+				if AlbumSearch 
+					if AlbumSearch.length > 0
+						br
+						div.nav
+							b !{AlbumSearch[0].abtitle}
+							br
+							!{AlbumSearch.length} Songs
+						br
+						div.table-responsive
+							table.table.table-striped
+								thead
+									tr
+										th Song Name
+										th Artist Name
+										th Duration
+										th 
+								tbody
+									each item in AlbumSearch
+										tr
+											td= item.stitle
+											td= item.aname
+											td= item.sduration
+											td
+												#[a(href="#" id="play") Play]
+					else 
+						div.nav 
+							p 0 songs in this album
+				
+				if TrackSearch 
+					if TrackSearch.length > 0
+						br
+						div.nav
+							b Track
+							br
+						br
+						div.table-responsive
+							table.table.table-striped
+								thead
+									tr
+										th Song Name
+										th Artist Name
+										th Duration
+										th 
+								tbody
+									each item in TrackSearch
+										tr
+											td= item.stitle
+											td= item.aname
+											td= item.sduration
+											td
+												#[a(href="#" id="play") Play]   #[a(href="#" id="rate") Rate]
+					else 
+						div.nav 
+							p Something went wrong please try again....
+
+				if ArtistSearch 
+					if ArtistSearch.length > 0
+						br
+						div.nav
+							b !{ArtistSearch[0].aname}
+							br
+							!{ArtistSearch.length} Songs(Most recent songs)
+							br
+							a(href="#" id='!{ArtistSearch[0].aid}') Like
+						br
+						div.table-responsive
+							table.table.table-striped
+								thead
+									tr
+										th Song Name
+										th Artist Name
+										th Duration
+										th 
+								tbody
+									each item in ArtistSearch
+										tr
+											td= item.stitle
+											td= item.aname
+											td= item.sduration
+											td
+												#[a(href="#" id="play") Play]
+					else 
+						div.nav 
+							p 0 song for this artist
+
+	include modals/alert
+	include modals/confirm
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/jquery.form.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/home.js')
+	script(src='/js/controllers/homeController.js')
+	link(href='/css/style1.css', rel='stylesheet')

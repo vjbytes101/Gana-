@@ -1,10 +1,19 @@
 $(document).ready(function() {
     var ajaxres = "";
-    $('#search-btn1').click(function(){
+    $('#topres').hide();
+    $('#artist').hide();
+    $('#track').hide();
+    $('#album').hide();
+    $('#playlist').hide();
+    $('#search-btn1,#topres').click(function(){
         var key = $("input[name='search']").val();
         var trHTML = '';
         var atHTML = '';
         $("#searchres").html('') ;
+        $('#artistres').html('');
+        $('#trackres').html('');
+        $('#albumres').html('');
+        $('#plres').html('');
         /*$.get("/search-query?key="+key, function(data, status){
             alert("Data: " + data );
         });*/
@@ -37,14 +46,6 @@ $(document).ready(function() {
                         if(response.ArtistSearch){
                             if(response.ArtistSearch.length>0){
                                 lenAt = 'true';
-                                atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Artist Name</th>'
-                                $.each(response.ArtistSearch, function (key,value) {
-                                    atHTML += 
-                                    '<tr><td><a href="'+ value.aid +'">' + value.aname + 
-                                    '</a></td></tr>'; 
-                                });
-                                atHTML += '</table></div>';
-                                $('#artist').append(atHTML);
                             } 
                         }
                         if(response.PlayListSearch){
@@ -54,32 +55,36 @@ $(document).ready(function() {
                         }
                     }
                     if(lenSongS == 'true'){
-                        trHTML += '<div id="nav"><a href="#searchres">Top Result</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+                        $('#topres').show();
                         if(lenAt == 'true'){
-                            trHTML += '<a href="#" id="artist">Artist</a>&nbsp;&nbsp;&nbsp;&nbsp;';
-                        }
+                            $('#artist').show();
+                        }else{$('#artist').hide();}
                         if(lenTk == 'true'){
-                            trHTML += '<a href="#box3">Tracks</a>&nbsp;&nbsp;&nbsp;&nbsp;';
-                        }
+                            $('#track').show();
+                        }else{$('#track').hide();}
                         if(lenAb == 'true'){
-                            trHTML += '<a href="#box4">Album</a>&nbsp;&nbsp;&nbsp;&nbsp;';
-                        }
+                            $('#album').show();
+                        }else{$('#album').hide();}
                         if(lenPl == 'true'){
-                            trHTML += '<a href="#box5">PlayList</a>&nbsp;&nbsp;&nbsp;&nbsp;';
-                        }
-                        trHTML += '</div>';
+                            $('#playlist').show();
+                        }else{$('#playlist').hide();}
                         trHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table"> <tr><th align="center">Title</th><th align="center">Duration</th><th align="center">Artist Name</th>'
                         $.each(response.SongSearch, function (key,value) {
                             trHTML += 
-                            '<tr><td>' + value.stitle + 
-                            '</td><td>' + value.sduration + 
+                            '<tr><td><a href="/plays?key=sid&val='+ value.sid +'"id="'+ value.sid +'">' + value.stitle + 
+                            '</a></td><td>' + value.sduration + 
                             '</td><td>' + value.aname + 
                             '</td></tr>';     
                         });
                         trHTML += '</table></div>';
-                        $('#searchres').append(trHTML);
+                        $('#searchres').html(trHTML);
                         //$("#res").html(response) ;
                     }else{
+                        $('#topres').hide();
+                        $('#artist').hide();
+                        $('#track').hide();
+                        $('#album').hide();
+                        $('#playlist').hide();
                         alert("No result found in database. Please try again with different keyword");
                     }
                 },
@@ -87,15 +92,97 @@ $(document).ready(function() {
                     alert(xhr);
                 }
             });
-            $('#artist').click(function(){
-                alert(1);
-            });
+            
         }else{
             alert("Please enter keyword to search.");
         }
     });
-function check()
-{
-    $("#searchres").html('') ;
-}
+    $('#artist').click(function(){
+        var atHTML = '';
+        if(ajaxres){
+            if(ajaxres.ArtistSearch){
+                if(ajaxres.ArtistSearch.length>0){
+                    lenAt = 'true';
+                    atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Artist Name</th>'
+                    $.each(ajaxres.ArtistSearch, function (key,value) {
+                        atHTML += 
+                        '<tr><td><a href="/plays?key=aid&val='+ value.aid +'">' + value.aname + 
+                        '</a></td></tr>'; 
+                    });
+                    atHTML += '</table></div>';
+                    $('#searchres').html('');
+                    $('#trackres').html('');
+                    $('#albumres').html('');
+                    $('#plres').html('');
+                    $('#artistres').html(atHTML);
+                } 
+            }
+        }
+    });
+    $('#track').click(function(){
+        var atHTML = '';
+        if(ajaxres){
+            if(ajaxres.TrackSearch){
+                if(ajaxres.TrackSearch.length>0){
+                    lenAt = 'true';
+                    atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Track Name</th>'
+                    $.each(ajaxres.TrackSearch, function (key,value) {
+                        atHTML += 
+                        '<tr><td><a href="/plays?key=tid&val='+ value.sid +'">' + value.stitle + 
+                        '</a></td></tr>'; 
+                    });
+                    atHTML += '</table></div>';
+                    $('#searchres').html('');
+                    $('#artistres').html('');
+                    $('#albumres').html('');
+                    $('#plres').html('');
+                    $('#trackres').html(atHTML);
+                } 
+            }
+        }
+    });
+    $('#album').click(function(){
+        var atHTML = '';
+        if(ajaxres){
+            if(ajaxres.AlbumSearch){
+                if(ajaxres.AlbumSearch.length>0){
+                    lenAt = 'true';
+                    atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Album Name</th>'
+                    $.each(ajaxres.AlbumSearch, function (key,value) {
+                        atHTML += 
+                        '<tr><td><a href="/plays?key=abid&val='+ value.abid +'">' + value.abtitle + 
+                        '</a></td></tr>'; 
+                    });
+                    atHTML += '</table></div>';
+                    $('#searchres').html('');
+                    $('#artistres').html('');
+                    $('#plres').html('');
+                    $('#trackres').html('');
+                    $('#albumres').html(atHTML);
+                } 
+            }
+        }
+    });
+    $('#playlist').click(function(){
+        var atHTML = '';
+        if(ajaxres){
+            if(ajaxres.PlayListSearch){
+                if(ajaxres.PlayListSearch.length>0){
+                    lenAt = 'true';
+                    atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Play List Name</th>'
+                    $.each(ajaxres.PlayListSearch, function (key,value) {
+                        atHTML += 
+                        '<tr><td><a href="/plays?key=pid&val='+ value.pid +'">' + value.ptitle + 
+                        '</a></td></tr>'; 
+                    });
+                    atHTML += '</table></div>';
+                    $('#searchres').html('');
+                    $('#artistres').html('');
+                    $('#albumres').html('');
+                    $('#trackres').html('');
+                    $('#plres').html(atHTML);
+                } 
+            }
+        }
+    });
 });

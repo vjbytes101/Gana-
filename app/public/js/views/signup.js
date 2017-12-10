@@ -16,6 +16,9 @@ $(document).ready(function() {
             } else if (e.responseText == 'username-taken') {
                 av.showInvalidUserName();
             }
+            else if (e.responseText == 'insert-failed') {
+                av.showInvalidInsertion();
+            }
         }
     });
     $('#name-tf').focus();

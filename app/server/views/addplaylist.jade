@@ -1,0 +1,66 @@
+extends layout
+
+block content
+	div.container-fluid
+		div.row
+			main.col-sm-9.ml-sm-auto.col-md-10.pt-3
+				section.row.text-center.placeholders
+					nav.navbar.navbar-default.navbar-fixed-top
+						.container
+							.navbar-header
+								.navbar-brand
+									h4 GANA
+							ul.nav.navbar-nav.navbar-right
+								li
+									.navbar-btn#btn-home.btn.btn-default
+										a(href="/home")
+											| Home
+									.navbar-btn#btn-home.btn.btn-default
+										a(href="/addplaylist")
+											| My PlayList
+									.navbar-btn#search-home.btn.btn-default
+										a(href="/search")
+											| Search songs
+									.navbar-btn#btn-logout.btn.btn-default
+										| Sign Out
+				br
+				br
+				br
+				div.createpl
+					a(href= '/createplaylist') Create Playlist
+				if PlaylistSearch
+					if PlaylistSearch.length > 0
+						br
+						div.pl
+							br
+							!{PlaylistSearch.length} PlayList available.
+							br
+						br
+						div.table-responsive
+							table.table.table-striped
+								thead
+									tr
+										th PlayList Name
+										th Type
+								tbody
+									each item in PlaylistSearch
+										tr
+											td
+												a(href= '/plays?key=pidc&val=' + item.pid)= item.ptitle 
+											td=item.ptype
+											td
+												#[a(href="#" id="edit") Edit]	#[a(href="#" id="delete") Delete]
+					else 
+						div.nav 
+							p 0 PlayList for this User.
+
+	include modals/alert
+	include modals/confirm
+
+block scripts
+	script(src='/vendor/jquery-2.2.3.min.js')
+	script(src='/vendor/jquery.form.min.js')
+	script(src='/vendor/bootstrap.min.js')
+	script(src='/js/views/home.js')
+	script(src='/js/controllers/homeController.js')
+	link(href='/css/style1.css', rel='stylesheet')
