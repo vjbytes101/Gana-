@@ -55,6 +55,8 @@ block content
 											span(class="js-play-song" data-trackid=item.sid) Play
 										td
 											input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
+										td
+											a.btn(type='button', data-toggle='modal', data-target='#myModal',class='btn-clk',id=item.sid) Add to List
 
 				if PlayList
 					if PlayList.length > 0
@@ -84,6 +86,8 @@ block content
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
+											td
+												a.btn(type='button',class='btn-clk',id=item.sid,value=item.pid) Remove from List
 					else 
 						div.nav 
 							p 0 songs in this PlayList
@@ -114,6 +118,8 @@ block content
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
+											td
+												a.btn(type='button', data-toggle='modal', data-target='#myModal',class='btn-clk',id=item.sid) Add to List
 					else 
 						div.nav 
 							p 0 songs in this album
@@ -143,6 +149,8 @@ block content
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
+											td
+												a.btn(type='button', data-toggle='modal', data-target='#myModal',class='btn-clk',id=item.sid) Add to List
 					else 
 						div.nav 
 							p Something went wrong please try again....
@@ -175,9 +183,25 @@ block content
 												span(class="js-play-song" data-trackid=item.sid) Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
+											td
+												a.btn(type='button', data-toggle='modal', data-target='#myModal',class='btn-clk',id=item.sid) Add to List
 					else 
 						div.nav 
 							p 0 song for this artist
+				
+				div.container
+					div#myModal.modal.fade(role='dialog')
+						div.modal-dialog
+							div.modal-content
+								div.modal-header
+									button.close(type='button', data-dismiss='modal') ×
+									h4.modal-title Select PlayList
+									div.modal-body
+										select.form-control#plname(name = "plname")
+											option(value="Select PlayList") Select PlayList
+											
+										div.modal-footer
+											button.btn.btn-default(id='subPl',type='button', data-dismiss='modal') Submit
 
 	include modals/alert
 	include modals/confirm
@@ -188,4 +212,6 @@ block scripts
 	script(src='/vendor/bootstrap.min.js')
 	script(src='/vendor/rating.js')
 	script(src='/js/views/plays.js')
+	script(src='/js/views/home.js')
+	script(src='/js/controllers/homeController.js')
 	link(href='/css/style1.css', rel='stylesheet')

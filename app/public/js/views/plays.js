@@ -68,4 +68,82 @@ $(document).ready(function() {
         }
     }
     updateLikeStatus();
+
+    $('.btn-clk').click(function(){
+        var sid = $(this).attr('id');
+        var pidc = getSearchParams("val");
+        var keyV = getSearchParams("key");
+        $('#plname').html('');
+        if(keyV =='pidc'|| keyV =='pid'){
+            $.ajax({
+                url: '/addmyPl',
+                type: 'post',
+                data:{
+                    sid:sid,
+                    pid:pidc,
+                    keyV:'pidc'
+                },
+                success: function(data) {
+                    console.log("PlayList removed sucessfully");
+                    location.reload();
+                },
+                error: function(jqXHR) {
+                    console.log(jqXHR.responseText + ' :: ' + jqXHR.statusText);
+                }
+            });
+        }else{
+            $.ajax({
+                url: '/getmyPl',
+                type: 'get',
+                success: function(data) {
+                    console.log("get PlayList");
+                    $('#plname').append($('<option>', { 
+                        value: 'Select Playlist',
+                        text : 'Select Playlist',
+                        id: 'Select Playlist'
+                    }));
+                    $.each(data, function (i, item) {
+                        $('#plname').append($('<option>', { 
+                            value: sid,
+                            text : item.ptitle,
+                            id: item.pid,
+                            keyV:''
+                        }));
+                    });
+                },
+                error: function(jqXHR) {
+                    console.log(jqXHR.responseText + ' :: ' + jqXHR.statusText);
+                }
+            });
+        }
+    });
+
+    $('#subPl').click(function(){
+        var selectedVal = $('#plname :selected').text();
+        var sid = $('#plname :selected').val();
+        var pid = $('option:selected').attr('id');
+        if(selectedVal != 'Select Playlist'){
+            $.ajax({
+                url: '/addmyPl',
+                type: 'post',
+                data:{
+                    sid:sid,
+                    pid:pid,
+                    keyV:''
+                },
+                success: function(data) {
+                    console.log("PlayList added sucessfully");
+                },
+                error: function(jqXHR) {
+                    console.log(jqXHR.responseText + ' :: ' + jqXHR.statusText);
+                }
+            });
+        }
+    });
+
+    function getSearchParams(k){
+        var p={};
+        location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
+        return k?p[k]:p;
+    }
 });

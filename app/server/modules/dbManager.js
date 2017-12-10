@@ -293,3 +293,33 @@ exports.checkArtistLikes = function(uid, aid) {
         });
     });
 }
+
+exports.getmyPl = function(uid) {
+    return new Promise((resolve, reject) => {
+        var query = "select pid,ptitle from playlist where uid = '" + uid + "';";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.addmyPl = function(sid,pid,keyV) {
+    return new Promise((resolve, reject) => {
+        if(keyV == 'pidc'){
+            var query = "Delete from pltrack where pid='" + pid + "'and sid= '" + sid + "';";
+        }else{
+            var query = "INSERT INTO pltrack (`pid`, `sid`, `snumber`) VALUES('" + pid + "', '" + sid + "', '" + pid + "');";
+        }
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}

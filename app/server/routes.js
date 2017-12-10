@@ -306,6 +306,39 @@ module.exports = function(app) {
             res.status(400).send('aid or uid not found');
         }
     });
+    
+    app.get('/getmyPl', function(req, res){
+        var uid = req.session.user && req.session.user[0].uid;
+        if(uid){
+            AM.getmyPl(uid).then(function(data){
+                res.send(data);
+            }).catch(err=>{
+                console.log("error in add rating post method");
+                res.status(500).send(err);
+            });
+        } else {
+            console.log("error in post rating method incomplete fields");
+            res.status(400).send('uid not found');
+        }
+    });
+
+    app.post('/addmyPl', function(req, res){
+        var uid = req.session.user && req.session.user[0].uid;
+        var sid = req.body.sid;
+        var pid = req.body.pid;
+        var keyV = req.body.keyV;
+        if(sid && pid){
+            AM.addmyPl(sid,pid,keyV).then(function(data){
+                res.send(data);
+            }).catch(err=>{
+                console.log("error in add Track post method");
+                res.status(500).send(err);
+            });
+        } else {
+            console.log("error in post rating method incomplete fields");
+            res.status(400).send('uid not found');
+        }
+    });
 
     app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found' }); });
 
