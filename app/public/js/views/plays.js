@@ -32,7 +32,7 @@ $(document).ready(function() {
     $('#artist-like').click(()=>{
         var data = $('#artist-like').data();
         var like = $('#artist-like').text() == "Like" ? 1 : 0;
-        if(data.aid){
+        if(data && data.aid){
             $.ajax({
                 url: '/like-artist',
                 type: 'POST',
@@ -49,7 +49,7 @@ $(document).ready(function() {
 
     function updateLikeStatus(){
         var data = $('#artist-like').data();
-        if(data.aid){
+        if(data && data.aid){
             $.ajax({
                 url: '/check-like',
                 type: 'POST',
@@ -68,6 +68,46 @@ $(document).ready(function() {
         }
     }
     updateLikeStatus();
+
+    $('#user-follow').click(()=>{
+        var data = $('#user-follow').data();
+        var follow = $('#user-follow').text() == "Follow" ? 1 : 0;
+        if(data && data.pid){
+            $.ajax({
+                url: '/follow-user',
+                type: 'POST',
+                data: { pid: data.pid, follow: follow },
+                success: function (data) {
+                    $('#user-follow').text(data);
+                },
+                error: function(jqXHR) {
+                    console.log(jqXHR.responseText + ' :: ' + jqXHR.statusText);
+                }
+            });
+        }
+    });
+
+    function updateFollowStatus(){
+        var data = $('#user-follow').data();
+        if(data && data.pid){
+            $.ajax({
+                url: '/check-Follow',
+                type: 'POST',
+                data: { pid: data.pid },
+                success: function (data) {
+                    if(data.length){
+                        $('#user-follow').text('Unfollow');
+                    } else {
+                        $('#user-follow').text('Follow');
+                    }
+                },
+                error: function(jqXHR) {
+                    console.log(jqXHR.responseText + ' :: ' + jqXHR.statusText);
+                }
+            });
+        }
+    }
+    updateFollowStatus();
 
     $('.btn-clk').click(function(){
         var sid = $(this).attr('id');

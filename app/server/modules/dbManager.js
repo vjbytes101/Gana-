@@ -179,9 +179,9 @@ exports.deletePlayList = function(pid) {
     });
 }
 
-exports.addNewPlaylist = function(uid, name, type,Qtype,plid) {
+exports.addNewPlaylist = function(uid, name, type, Qtype, plid) {
     return new Promise((resolve, reject) => {
-        if(Qtype == 'update'){
+        if (Qtype == 'update') {
             console.log(plid);
             console.log(name);
             console.log(name);
@@ -194,7 +194,7 @@ exports.addNewPlaylist = function(uid, name, type,Qtype,plid) {
                     resolve(results);
                 }
             });
-        }else{
+        } else {
             db.query('call new_playlist(?,?, ?)', [uid, name, type], function(err, results) {
                 if (err) {
                     reject('insert-failed');
@@ -244,7 +244,7 @@ var validatePassword = function(plainPass, hashedPass, callback) {
 
 exports.addRating = function(uid, sid, rating) {
     return new Promise((resolve, reject) => {
-        var query = "INSERT INTO rating (`uid`, `sid`, `rating`, `rdate`) VALUES('" + uid + "', '" + sid + "', " + rating +", NOW()) ON DUPLICATE KEY UPDATE rating="+ rating +", rdate=NOW();";
+        var query = "INSERT INTO rating (`uid`, `sid`, `rating`, `rdate`) VALUES('" + uid + "', '" + sid + "', " + rating + ", NOW()) ON DUPLICATE KEY UPDATE rating=" + rating + ", rdate=NOW();";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -270,7 +270,7 @@ exports.addArtistLikes = function(uid, aid) {
 
 exports.deleteArtistLikes = function(uid, aid) {
     return new Promise((resolve, reject) => {
-        var query = "DELETE FROM Likes WHERE uid='" + uid + "' and aid='"+ aid + "';";
+        var query = "DELETE FROM Likes WHERE uid='" + uid + "' and aid='" + aid + "';";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -294,6 +294,81 @@ exports.checkArtistLikes = function(uid, aid) {
     });
 }
 
+exports.checkUserFollow = function(uid, pid) {
+    return new Promise((resolve, reject) => {
+        var query1 = `Select uid from playlist where pid = '` + pid + `';`
+        db.query(query1, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                var unamefollow = result[0].uid;
+                if (unamefollow == uid) {
+                    reject('same user');
+                    return;
+                }
+                var query2 = `Select * from followers where uid ='` + uid + `' and unamefollow = '` + unamefollow + `';`;
+                db.query(query2, (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            }
+        });
+    });
+}
+
+exports.adduserFollow = function(uid, pid) {
+    return new Promise((resolve, reject) => {
+        var query1 = `Select uid from playlist where pid = '` + pid + `';`
+        db.query(query1, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                var unamefollow = result[0].uid;
+                if (unamefollow == uid) {
+                    reject('same user');
+                    return;
+                }
+                var query = "INSERT INTO followers (`uid`, `unamefollow`, `followdt`) VALUES('" + uid + "', '" + unamefollow + "', NOW()) ON DUPLICATE KEY UPDATE followdt=NOW();";
+                db.query(query, (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            }
+        });
+    });
+}
+
+exports.deleteUserFollow = function(uid, pid) {
+    return new Promise((resolve, reject) => {
+        var query1 = `Select uid from playlist where pid = '` + pid + `';`
+        db.query(query1, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                var unamefollow = result[0].uid;
+                if (unamefollow == uid) {
+                    reject('same user');
+                    return;
+                }
+                var query = "DELETE FROM followers WHERE uid='" + uid + "' and unamefollow='" + unamefollow + "';";
+                db.query(query, (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
+            }
+        });
+    });
+}
+
 exports.getmyPl = function(uid) {
     return new Promise((resolve, reject) => {
         var query = "select pid,ptitle from playlist where uid = '" + uid + "';";
@@ -307,11 +382,11 @@ exports.getmyPl = function(uid) {
     });
 }
 
-exports.addmyPl = function(sid,pid,keyV) {
+exports.addmyPl = function(sid, pid, keyV) {
     return new Promise((resolve, reject) => {
-        if(keyV == 'pidc'){
+        if (keyV == 'pidc') {
             var query = "Delete from pltrack where pid='" + pid + "'and sid= '" + sid + "';";
-        }else{
+        } else {
             var query = "INSERT INTO pltrack (`pid`, `sid`, `snumber`) VALUES('" + pid + "', '" + sid + "', '" + pid + "');";
         }
         db.query(query, (err, result) => {

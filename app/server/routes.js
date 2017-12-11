@@ -293,7 +293,6 @@ module.exports = function(app) {
     app.post('/check-like', function(req, res) {
         var uid = req.session.user && req.session.user[0].uid;
         var aid = req.body.aid;
-        console.log(req.body, uid)
         if (uid && aid) {
             AM.checkArtistLikes(uid, aid).then((data) => {
                 res.status(200).send(data);
@@ -304,6 +303,48 @@ module.exports = function(app) {
         } else {
             console.log("error in get artist like method incomplete fields");
             res.status(400).send('aid or uid not found');
+        }
+    });
+
+    app.post('/follow-user', function(req, res) {
+        var uid = req.session.user && req.session.user[0].uid;
+        var pid = req.body.pid;
+        var follow = parseInt(req.body.follow);
+        if (uid && pid) {
+            if (follow) {
+                AM.adduserFollow(uid, pid).then((data) => {
+                    res.status(200).send("Unfollow");
+                }).catch(err => {
+                    console.log("error in add user follow post method");
+                    res.status(500).send(err);
+                });
+            } else {
+                AM.deleteUserFollow(uid, pid).then((data) => {
+                    res.status(200).send("Follow");
+                }).catch(err => {
+                    console.log("error in delete user follow post method");
+                    res.status(500).send(err);
+                });
+            }
+        } else {
+            console.log("error in post user follow method incomplete fields");
+            res.status(400).send('pid or uid not found');
+        }
+    });
+
+    app.post('/check-follow', function(req, res) {
+        var uid = req.session.user && req.session.user[0].uid;
+        var pid = req.body.pid;
+        if (uid && pid) {
+            AM.checkUserFollow(uid, pid).then((data) => {
+                res.status(200).send(data);
+            }).catch(err => {
+                console.log("error in check user follow get method");
+                res.status(500).send(err);
+            })
+        } else {
+            console.log("error in get user follow method incomplete fields");
+            res.status(400).send('pid or uid not found');
         }
     });
     
