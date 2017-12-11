@@ -136,7 +136,7 @@ exports.searchPlays = function(key, keyVal, uid) {
         } else if (key == 'aid') {
             query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid='" + keyVal + "'";
         } else if (key == 'abid') {
-            query = "select s.sid, s.stitle, s.sduration, ab.abtitle, a.aname from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid='" + keyVal + "'";
+            query = "select s.sid, s.stitle, s.sduration,ab.abid, ab.abtitle, a.aname from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid='" + keyVal + "'";
         } else if (key == 'pid') {
             query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid='" + keyVal + "'";
         } else if (key == 'pidc') {
@@ -388,6 +388,29 @@ exports.addmyPl = function(sid, pid, keyV) {
             var query = "Delete from pltrack where pid='" + pid + "'and sid= '" + sid + "';";
         } else {
             var query = "INSERT INTO pltrack (`pid`, `sid`, `snumber`) VALUES('" + pid + "', '" + sid + "', '" + pid + "');";
+        }
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.addtoplay = function(uid,sid,pid,abid) {
+    return new Promise((resolve, reject) => {
+        if(pid == '' && abid == ''){
+            var query = "INSERT INTO plays (`uid`, `sid`, `playstime`) VALUES('" + uid + "','" + sid + "', NOW());";
+        }
+        else if(abid == ''){
+            var query = "INSERT INTO plays (`uid`, `pid`, `sid`, `playstime`) VALUES('" + uid + "', " + pid + ",'" + sid + "', NOW());";
+        }else if(pid == ''){
+            var query = "INSERT INTO plays (`uid`, `sid`, `abid`, `playstime`) VALUES('" + uid + "','" + sid + "', '" + abid + "', NOW());";
+        }
+        else{
+            var query = "INSERT INTO plays (`uid`,`pid`, `sid`, `abid`, `playstime`) VALUES('" + uid + "', " + pid + ",'" + sid + "', '" + abid + "', NOW());";
         }
         db.query(query, (err, result) => {
             if (err) {

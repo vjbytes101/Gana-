@@ -4,6 +4,24 @@ $(document).ready(function() {
             var data = $(event.target).data();
             if (data.trackid) {
                 $('.spotify-player').html('<iframe src="https://open.spotify.com/embed?uri=spotify:track:' + data.trackid + '" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>')
+                var sid = data.trackid;
+                var pid = data.pid;
+                var abid = data.abid;
+                $.ajax({
+                    url: '/addToPlay',
+                    type: 'post',
+                    data:{
+                        sid:sid,
+                        pid:pid,
+                        abid:abid
+                    },
+                    success: function(data) {
+                        console.log("Play updated sucessfully");
+                    },
+                    error: function(jqXHR) {
+                        console.log(jqXHR.responseText + ' :: ' + jqXHR.statusText);
+                    }
+                });
             }
         }
     });
