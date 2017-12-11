@@ -340,6 +340,24 @@ module.exports = function(app) {
         }
     });
 
+    app.post('/addToPlay', function(req, res){
+        var uid = req.session.user && req.session.user[0].uid;
+        var sid = req.body.sid;
+        var pid = req.body.pid;
+        var abid = req.body.abid;
+        if(sid && uid){
+            AM.addtoplay(uid,sid,pid,abid).then(function(data){
+                res.send(data);
+            }).catch(err=>{
+                console.log("error in add Track post method");
+                res.status(500).send(err);
+            });
+        } else {
+            console.log("error in post rating method incomplete fields");
+            res.status(400).send('uid not found');
+        }
+    });
+
     app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found' }); });
 
 };

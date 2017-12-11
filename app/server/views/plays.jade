@@ -52,7 +52,7 @@ block content
 											a(href= '/artist?artistName=' + item.sid)= item.sname
 										td= item.aname
 										td
-											span(class="js-play-song" data-trackid=item.sid) Play
+											span(class="js-play-song" data-trackid=item.sid data-pid='' data-abid='') Play
 										td
 											input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 										td
@@ -83,7 +83,7 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												span(class="js-play-song" data-trackid=item.sid) Play
+												span(class="js-play-song" data-trackid=item.sid data-pid=item.pid data-abid='') Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
@@ -115,7 +115,7 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												span(class="js-play-song" data-trackid=item.sid) Play
+												span(class="js-play-song" data-trackid=item.sid data-pid='' data-abid=item.abid) Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
@@ -146,7 +146,7 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												span(class="js-play-song" data-trackid=item.sid) Play
+												span(class="js-play-song" data-trackid=item.sid data-pid='' data-abid='') Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
@@ -180,7 +180,7 @@ block content
 											td= item.aname
 											td= item.sduration
 											td
-												span(class="js-play-song" data-trackid=item.sid) Play
+												span(class="js-play-song" data-trackid=item.sid data-pid='' data-abid='') Play
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
