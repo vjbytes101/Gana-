@@ -132,15 +132,15 @@ exports.searchPlays = function(key, keyVal, uid) {
     return new Promise((resolve, reject) => {
         var query = '';
         if (key == 'sid' || key == 'tid') {
-            query = "select s.sid, s.stitle, s.sduration, a.aname, a.aid from songs s, artist a where s.aid = a.aid and s.sid=" + mysql.escape(keyVal) + ";";
+            query = "select s.sid, s.stitle, s.sduration, a.aname, a.aid from songs s, artist a where s.aid = a.aid and s.sid=" + mysql.escape(keyVal);
         } else if (key == 'aid') {
-            query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid=" + mysql.escape(keyVal) + ";";
+            query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid=" + mysql.escape(keyVal);
         } else if (key == 'abid') {
-            query = "select s.sid, s.stitle, s.sduration,ab.abid, ab.abtitle, a.aname, a.aid from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid=" + mysql.escape(keyVal) + ";";
+            query = "select s.sid, s.stitle, s.sduration,ab.abid, ab.abtitle, a.aname, a.aid from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid=" + mysql.escape(keyVal);
         } else if (key == 'pid') {
-            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid=" + mysql.escape(keyVal) + ";";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid=" + mysql.escape(keyVal);
         } else if (key == 'pidc') {
-            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.pid=" + mysql.escape(keyVal) + ";";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.pid=" + mysql.escape(keyVal);
         }
         query = "select t.*, r.rating from (" + query + ") as t left outer join (select sid,rating from rating r where uid=" + mysql.escape(uid) + ")as r on t.sid = r.sid;";
         db.query(query, (err, result) => {
