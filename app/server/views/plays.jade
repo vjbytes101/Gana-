@@ -75,7 +75,7 @@ block content
 										th Song Name
 										th Artist Name
 										th Duration
-										th 
+										th(id='similar-playlist' data-data=similarAlbum)
 								tbody
 									each item in PlayList
 										tr
@@ -88,6 +88,7 @@ block content
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
 												a.btn(type='button',class='btn-clk',id=item.sid,value=item.pid) Remove from List
+						div#playlistres
 					else 
 						div.nav 
 							p 0 songs in this PlayList
@@ -107,7 +108,7 @@ block content
 										th Song Name
 										th Artist Name
 										th Duration
-										th 
+										th(id='similar-album' data-data=similarAlbum)
 								tbody
 									each item in AlbumSearch
 										tr
@@ -120,6 +121,7 @@ block content
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
 												a.btn(type='button', data-toggle='modal', data-target='#myModal',class='btn-clk',id=item.sid) Add to List
+						div#albumres
 					else 
 						div.nav 
 							p 0 songs in this album
@@ -172,7 +174,7 @@ block content
 										th Song Name
 										th Artist Name
 										th Duration
-										th 
+										th(id='similar-artist' data-data=similarArtist)
 								tbody
 									each item in ArtistSearch
 										tr
@@ -185,6 +187,7 @@ block content
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
 												a.btn(type='button', data-toggle='modal', data-target='#myModal',class='btn-clk',id=item.sid) Add to List
+						div#artistres
 					else 
 						div.nav 
 							p 0 song for this artist

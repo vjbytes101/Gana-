@@ -122,17 +122,15 @@ module.exports = function(app) {
         } else {
             var uid = req.session.user && req.session.user[0].uid;
             AM.searchPlays(key, keyVal, uid).then(function(sres) {
-                var searchRes = JSON.stringify(sres);
-                var finalsRes = JSON.parse(searchRes);
-                finalObject.SongSearch = finalsRes;
+                finalObject.SongSearch = sres.playData;
                 if (key == 'pid') {
-                    res.render('plays', { PlayList: finalObject.SongSearch });
+                    res.render('plays', { PlayList: finalObject.SongSearch, similarPlaylist: sres.similarData});
                 } else if (key == 'tid') {
                     res.render('plays', { TrackSearch: finalObject.SongSearch });
                 } else if (key == 'abid') {
-                    res.render('plays', { AlbumSearch: finalObject.SongSearch });
+                    res.render('plays', { AlbumSearch: finalObject.SongSearch, similarAlbum: sres.similarData });
                 } else if (key == 'aid') {
-                    res.render('plays', { ArtistSearch: finalObject.SongSearch });
+                    res.render('plays', { ArtistSearch: finalObject.SongSearch, similarArtist: sres.similarData });
                 } else if (key == 'pidc') {
                     res.render('plays', { PlayList: finalObject.SongSearch });
                 } else {

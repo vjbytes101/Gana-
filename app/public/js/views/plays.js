@@ -204,4 +204,46 @@ $(document).ready(function() {
         location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
         return k?p[k]:p;
     }
+
+    function fillSimilarArtist(){
+        var data = $('#similar-artist').data('data');
+        if(data && data.length){
+            var atHTML = '';
+            atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Similar Artist</th>'
+            $.each(data, function (key,value) {
+                atHTML +='<tr><td><a href="/plays?key=aid&val='+ value.aid +'">' + value.aname + '</a></td></tr>'; 
+            });
+            atHTML += '</table></div>';
+            $('#artistres').html(atHTML);
+        }
+    }
+    fillSimilarArtist();
+
+    function fillSimilarAlbum(){
+        var data = $('#similar-album').data('data');
+        if(data && data.length){
+            var atHTML = '';
+            atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Album Name</th>'
+            $.each(data, function (key,value) {
+                atHTML += '<tr><td><a href="/plays?key=abid&val='+ value.abid +'">' + value.abtitle + '</a></td></tr>'; 
+            });
+            atHTML += '</table></div>';
+            $('#albumres').html(atHTML);
+        }
+    }
+    fillSimilarAlbum();
+
+    function fillSimilarPlaylist(){
+        var data = $('#similar-playlist').data('data');
+        if(data && data.length){
+            var atHTML = '';
+            atHTML += '<div class="table-responsive"><table class="table table-striped" id="records_table1"> <th align="center">Play List Name</th>'
+            $.each(data, function (key,value) {
+                atHTML += '<tr><td><a href="/plays?key=pid&val='+ value.pid +'">' + value.ptitle + '</a></td></tr>'; 
+            });
+            atHTML += '</table></div>';
+            $('#playlistres').html(atHTML);
+        }
+    }
+    fillSimilarPlaylist();
 });

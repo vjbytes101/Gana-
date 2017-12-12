@@ -147,11 +147,90 @@ exports.searchPlays = function(key, keyVal, uid) {
             if (err) {
                 reject(err);
             } else {
+                var finalResult = {};
+                finalResult.playData = result;
+                if(key == 'aid'){
+                    searchSimilarArtists(keyVal).then(res=>{
+                        finalResult.similarData = res
+                        resolve(finalResult)
+                    }).catch(err=>{
+                        reject(err);
+                    });
+                } else if (key == 'abid') {
+                    searchSimilarAlbums(keyVal).then(res=>{
+                        finalResult.similarData = res
+                        resolve(finalResult)
+                    }).catch(err=>{
+                        reject(err);
+                    });
+                } else if (key == 'pid') {
+                    searchSimilarPlaylist(keyVal).then(res=>{
+                        finalResult.similarData = res
+                        resolve(finalResult)
+                    }).catch(err=>{
+                        reject(err);
+                    });
+                } else {
+                    resolve(finalResult);
+                }
+            }
+        });
+    });
+}
+
+function searchSimilarArtists(aid){
+    return new Promise((resolve, reject) => {
+        var query = `SELECT ades FROM ARTIST WHERE aid = '`+aid+`';`;
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                result = JSON.stringify(result);
+                result = JSON.parse(result);
+                var artistTypes = result && result[0].ades;
+                artistTypes = artistTypes && artistTypes.split(',').join('|');
+                var query2 = `select * from Artist where aid !='`+ aid +`' and ades REGEXP "` + artistTypes + `";`;
+                db.query(query2, (err, results) =>{
+                    if(err){
+                        reject(err);
+                    } else {
+                        console.log(results);
+                        resolve(results);
+                    }
+                });
+            }
+        });
+    });
+}
+
+function searchSimilarPlaylist(pid){
+    return new Promise((resolve, reject) => {
+        var query = `SELECT distinct * FROM playlist p where uid in (Select uid from playlist where pid = '`+pid+`');`;
+        console.log(query)
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
                 resolve(result);
             }
         });
     });
 }
+
+function searchSimilarAlbums(abid){
+    return new Promise((resolve, reject) => {
+        var query = `SELECT distinct ab.* FROM album ab, songs s, AlbumSong abms where ab.abid != '`+abid+`' and ab.abid = abms.abid and abms.sid = s.sid and s.sgenre in (SELECT s.sgenre FROM album ab, songs s, AlbumSong abms where ab.abid = abms.abid and abms.sid = s.sid and ab.abid = '`+abid+`')`;
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+
 
 exports.getPlayListKeyword = function(username) {
     return new Promise((resolve, reject) => {
