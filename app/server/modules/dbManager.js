@@ -539,7 +539,7 @@ exports.getSimilarPlayedTrack = function(uid) {
                             query1 += " and ";
                         }
                     }
-                    query1 += " )group by s.sgenre limit 5;";
+                    query1 += " ) limit 5;";
                     db.query(query1, (err, result1) => {
                         if (err) {
                             reject(err);
