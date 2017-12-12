@@ -177,7 +177,7 @@ module.exports = function(app) {
             console.log(delKey);
             AM.deletePlayList(delKey).then(function(plres) {
                 res.send("success");
-            }).then(err => {
+            }).catch(err => {
                 res.status(500).send(err);
             });
         }

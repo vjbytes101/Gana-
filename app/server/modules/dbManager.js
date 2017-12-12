@@ -168,7 +168,9 @@ exports.getPlayListKeyword = function(username) {
 
 exports.deletePlayList = function(pid) {
     return new Promise((resolve, reject) => {
-        db.query('call delete_playlist(?)', [pid], function(err, results) {
+        var query = "delete from playlist where pid = '" + pid + "';";
+        console.log(query);
+        db.query(query, (err, results) => {
             console.log(pid);
             if (err) {
                 reject('delete-failed');
