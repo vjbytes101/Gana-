@@ -127,12 +127,12 @@ $(document).ready(function() {
     }
     updateFollowStatus();
 
-    $('.btn-clk').click(function(){
+    $('.btn-clk,.btn-clk1').click(function(){
         var sid = $(this).attr('id');
         var pidc = getSearchParams("val");
         var keyV = getSearchParams("key");
         $('#plname').html('');
-        if(keyV =='pidc'|| keyV =='pid'){
+        if(keyV =='pidc'){
             $.ajax({
                 url: '/addmyPl',
                 type: 'post',
@@ -198,7 +198,15 @@ $(document).ready(function() {
             });
         }
     });
-
+    var keyParamter = getSearchParams('key');
+    if(keyParamter == 'pid'){
+        $(".btn-clk1").hide();
+        $(".btn-clk").show();  
+        
+    }else if(keyParamter == 'pidc'){
+        $(".btn-clk1").show();
+        $(".btn-clk").hide(); 
+    }
     function getSearchParams(k){
         var p={};
         location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})

@@ -87,7 +87,8 @@ block content
 											td
 												input(type="number" name="song-rating" class="rating js-rating" value=item.rating data-trackid=item.sid)
 											td
-												a.btn(type='button',class='btn-clk',id=item.sid,value=item.pid) Remove from List
+												a.btn(type='button',class='btn-clk1',id=item.sid,value=item.pid) Remove from List
+												a.btn(type='button', data-toggle='modal', data-target='#myModal',class='btn-clk',id=item.sid) Add to List
 					else 
 						div.nav 
 							p 0 songs in this PlayList
