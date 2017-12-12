@@ -50,7 +50,8 @@ block content
 										td= item.stitle
 										//td
 											a(href= '/artist?artistName=' + item.sid)= item.sname
-										td= item.aname
+										td
+											a(href= '/plays?key=aid&val=' + item.aid)= item.aname
 										td
 											span(class="js-play-song" data-trackid=item.sid data-pid='' data-abid='') Play
 										td
@@ -80,7 +81,8 @@ block content
 									each item in PlayList
 										tr
 											td= item.stitle
-											td= item.aname
+											td
+												a(href= '/plays?key=aid&val=' + item.aid)= item.aname
 											td= item.sduration
 											td
 												span(class="js-play-song" data-trackid=item.sid data-pid=item.pid data-abid='') Play
@@ -114,7 +116,8 @@ block content
 									each item in AlbumSearch
 										tr
 											td= item.stitle
-											td= item.aname
+											td
+												a(href= '/plays?key=aid&val=' + item.aid)= item.aname
 											td= item.sduration
 											td
 												span(class="js-play-song" data-trackid=item.sid data-pid='' data-abid=item.abid) Play
@@ -146,7 +149,8 @@ block content
 									each item in TrackSearch
 										tr
 											td= item.stitle
-											td= item.aname
+											td
+												a(href= '/plays?key=aid&val=' + item.aid)= item.aname
 											td= item.sduration
 											td
 												span(class="js-play-song" data-trackid=item.sid data-pid='' data-abid='') Play

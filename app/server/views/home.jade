@@ -78,7 +78,8 @@ block content
 											tr
 												td
 													a(href= '/plays?key=tid&val=' + item.sid)= item.stitle
-												td= item.aname
+												td
+													a(href= '/plays?key=aid&val=' + item.aid)= item.aname
 												td= item.sduration
 
 					if finalSimRel 
@@ -101,7 +102,8 @@ block content
 											tr
 												td
 													a(href= '/plays?key=tid&val=' + item.sid)= item.stitle
-												td= item.aname
+												td
+													a(href= '/plays?key=aid&val=' + item.aid)= item.aname
 												td= item.sduration
 					
 

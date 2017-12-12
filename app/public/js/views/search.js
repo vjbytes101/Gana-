@@ -120,7 +120,7 @@ $(document).ready(function() {
                             trHTML +=
                                 '<tr><td><a href="/plays?key=sid&val=' + value.sid + '"id="' + value.sid + '">' + value.stitle +
                                 '</a></td><td>' + value.sduration +
-                                '</td><td>' + value.aname +
+                                '</td><td><a href="/plays?key=aid&val=' + value.aid + '"id="' + value.aid + '">' + value.aname +
                                 '</td></tr>';
                         });
                         trHTML += '</table></div>';
