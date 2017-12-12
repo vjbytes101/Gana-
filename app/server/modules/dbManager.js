@@ -444,28 +444,33 @@ exports.getSimilarPlayedTrack = function(uid) {
             if (err) {
                 reject(err);
             } else {
-                var query1 = "select s.sgenre, s.sid, s.stitle,s.sduration,a.aname from songs as s, artist as a where s.aid=a.aid and (";
-                for(var i = 0; i < result.length;i++){
-                    query1 += "s.sgenre like '%"+ result[i].sgenre +"%'";
-                    if(i<result.length-1){
-                        query1 += " or ";
+                console.log(result);
+                if(result && result.length > 0){
+                    var query1 = "select s.sgenre, s.sid, s.stitle,s.sduration,a.aname from songs as s, artist as a where s.aid=a.aid and (";
+                    for(var i = 0; i < result.length;i++){
+                        query1 += "s.sgenre like '%"+ result[i].sgenre +"%'";
+                        if(i<result.length-1){
+                            query1 += " or ";
+                        }
                     }
+                    query1 += ") and (";
+                    for(var i = 0; i < result.length;i++){
+                        query1 += "s.sid !='"+ result[i].sid +"'";
+                        if(i<result.length-1){
+                            query1 += " and ";
+                        }
+                    }
+                    query1 += " )group by s.sgenre limit 5;";
+                    db.query(query1, (err, result1) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(result1);
+                        }
+                    });
+                }else{
+                    resolve(result);
                 }
-                query1 += ") and (";
-                for(var i = 0; i < result.length;i++){
-                    query1 += "s.sid !='"+ result[i].sid +"'";
-                    if(i<result.length-1){
-                        query1 += " and ";
-                    }
-                }
-                query1 += " )group by s.sgenre limit 5;";
-                db.query(query1, (err, result) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(result);
-                    }
-                });
             }
         });
     });
