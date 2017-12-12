@@ -423,3 +423,44 @@ exports.addtoplay = function(uid,sid,pid,abid) {
         });
     });
 }
+
+exports.getMostRecentPlayedTrack = function(uid) {
+    return new Promise((resolve, reject) => {
+        var query = "select s.sid,s.stitle,s.sduration,a.aname from songs as s, plays as p,artist as a where p.uid = '" + uid + "' and s.sid = p.sid and a.aid = s.aid order by playstime desc limit 5";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.getSimilarPlayedTrack = function(uid) {
+    return new Promise((resolve, reject) => {
+        var query = "select s.sid,s.sgenre from songs as s, plays as p,artist as a where p.uid = '" + uid + "' and s.sid = p.sid and a.aid = s.aid order by playstime desc limit 5";
+        db.query(query, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                var query1 = "select s.sgenre, s.sid, s.stitle,s.sduration,a.aname from songs as s, artist as a where s.aid=a.aid and (";
+                for(var i = 0; i < result.length;i++){
+                    query1 += "s.sgenre like '%"+ result[i].sgenre +"%'";
+                    if(i<result.length-1){
+                        query1 += " or ";
+                    }
+                }
+                query1 += ") and (";
+                for(var i = 0; i < result.length;i++){
+                    query1 += "s.sid !='"+ result[i].sid +"'";
+                    if(i<result.length-1){
+                        query1 += " and ";
+                    }
+                }
+                query1 += " )group by s.sgenre limit 5;";
+                resolve(result);
+            }
+        });
+    });
+}

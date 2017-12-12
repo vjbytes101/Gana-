@@ -35,6 +35,7 @@ module.exports = function(app) {
             res.redirect('/');
         } else {
             var userName = req.session && req.session.user && req.session.user.name;
+            var uid = req.session.user && req.session.user[0].uid;
             var finalObject = {};
             AM.getMostRecentPlayList().then(function(data) {
                 var tkRes = JSON.stringify(data);
@@ -44,7 +45,19 @@ module.exports = function(app) {
                     var AbRes = JSON.stringify(plres);
                     var finalAbRes = JSON.parse(AbRes);
                     finalObject.ABRecent = finalAbRes;
-                    res.render('home', finalObject);
+                    return AM.getMostRecentPlayedTrack(uid).then(function(plres1) {
+                        var plRes1 = JSON.stringify(plres1);
+                        var finalPTRes = JSON.parse(plRes1);
+                        finalObject.finalPTRes = finalPTRes;
+                        //console.log(finalObject);
+                        return AM.getSimilarPlayedTrack(uid).then(function(plres2) {
+                            var plRes2 = JSON.stringify(plres2);
+                            var finalSimRes = JSON.parse(plRes2);
+                            finalObject.finalSimRel = finalSimRes;
+                            //console.log(finalObject);
+                            res.render('home', finalObject);
+                        });
+                    });
                 });
             }).catch(err => {
                 console.log("error in home get method")
