@@ -27,7 +27,7 @@ db.connect(function(err) {
 
 exports.manualLogin = function(user, pass) {
     return new Promise((resolve, reject) => {
-        var query = "Select * from User where `uid`='" + mysql.escape(user) + "';";
+        var query = "Select * from User where `uid`=" + mysql.escape(user) + ";";
         db.query(query, (err, result) => {
             if (err) {
                 reject('user-not-found');
@@ -76,7 +76,7 @@ exports.searchKeyword = function(keyword, userName) {
 
 exports.searchAlbumKeyword = function(keyword) {
     return new Promise((resolve, reject) => {
-        var query = "select abid, abtitle from album where abtitle like '%" + mysql.escape(keyword) + "%';";
+        var query = "select abid, abtitle from album where abtitle like concat('%'," + mysql.escape(keyword) + ",'%');";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -90,7 +90,7 @@ exports.searchAlbumKeyword = function(keyword) {
 
 exports.searchTrackKeyword = function(keyword) {
     return new Promise((resolve, reject) => {
-        var query = "select sid, stitle from songs where stitle like '%" + mysql.escape(keyword) + "%';";
+        var query = "select sid, stitle from songs where stitle like concat('%'," + mysql.escape(keyword) + ",'%');";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -103,7 +103,7 @@ exports.searchTrackKeyword = function(keyword) {
 
 exports.searchArtistKeyword = function(keyword) {
     return new Promise((resolve, reject) => {
-        var query = "select aid, aname from artist where aname like '%" + mysql.escape(keyword) + "%';";
+        var query = "select aid, aname from artist where aname like concat('%'," + mysql.escape(keyword) + ",'%');";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -117,7 +117,7 @@ exports.searchArtistKeyword = function(keyword) {
 
 exports.searchPlayListKeyword = function(keyword) {
     return new Promise((resolve, reject) => {
-        var query = "select pid, ptitle from playlist where ptype = 'public' and ptitle like '%" + mysql.escape(keyword) + "%';";
+        var query = "select pid, ptitle from playlist where ptype = 'public' and ptitle like concat('%'," + mysql.escape(keyword) + ",'%');";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -132,17 +132,17 @@ exports.searchPlays = function(key, keyVal, uid) {
     return new Promise((resolve, reject) => {
         var query = '';
         if (key == 'sid' || key == 'tid') {
-            query = "select s.sid, s.stitle, s.sduration, a.aname, a.aid from songs s, artist a where s.aid = a.aid and s.sid='" + mysql.escape(keyVal) + "'";
+            query = "select s.sid, s.stitle, s.sduration, a.aname, a.aid from songs s, artist a where s.aid = a.aid and s.sid=" + mysql.escape(keyVal) + ";";
         } else if (key == 'aid') {
-            query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid='" + mysql.escape(keyVal) + "'";
+            query = "select s.sid, s.stitle, s.sduration, a.aid, a.aname from songs s, artist a where s.aid = a.aid and a.aid=" + mysql.escape(keyVal) + ";";
         } else if (key == 'abid') {
-            query = "select s.sid, s.stitle, s.sduration,ab.abid, ab.abtitle, a.aname, a.aid from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid='" + mysql.escape(keyVal) + "'";
+            query = "select s.sid, s.stitle, s.sduration,ab.abid, ab.abtitle, a.aname, a.aid from songs s, Artist a, albumsong absg, album ab where ab.abid = absg.abid and absg.sid = s.sid and a.aid = s.aid and ab.abid=" + mysql.escape(keyVal) + ";";
         } else if (key == 'pid') {
-            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid='" + mysql.escape(keyVal) + "'";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.ptype = 'public' and p.pid=" + mysql.escape(keyVal) + ";";
         } else if (key == 'pidc') {
-            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.pid='" + mysql.escape(keyVal) + "'";
+            query = "select p.pid, s.sid, s.stitle, s.sduration, p.ptitle, a.aname, a.aid from playlist p, pltrack ps, songs s, artist a where a.aid = s.aid and s.sid = ps.sid and p.pid = ps.pid and p.pid=" + mysql.escape(keyVal) + ";";
         }
-        query = "select t.*, r.rating from (" + query + ") as t left outer join (select sid,rating from rating r where uid='" + mysql.escape(uid) + "')as r on t.sid = r.sid;";
+        query = "select t.*, r.rating from (" + query + ") as t left outer join (select sid,rating from rating r where uid=" + mysql.escape(uid) + ")as r on t.sid = r.sid;";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -180,7 +180,7 @@ exports.searchPlays = function(key, keyVal, uid) {
 
 function searchSimilarArtists(aid){
     return new Promise((resolve, reject) => {
-        var query = `SELECT ades FROM ARTIST WHERE aid = '`+mysql.escape(aid)+`';`;
+        var query = `SELECT ades FROM ARTIST WHERE aid = `+mysql.escape(aid)+`;`;
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -189,7 +189,7 @@ function searchSimilarArtists(aid){
                 result = JSON.parse(result);
                 var artistTypes = result && result[0].ades;
                 artistTypes = artistTypes && artistTypes.split(',').join('|');
-                var query2 = `select * from Artist where aid !='`+ mysql.escape(aid) +`' and ades REGEXP "` + mysql.escape(artistTypes) + `";`;
+                var query2 = `select * from Artist where aid !=`+ mysql.escape(aid) +` and ades REGEXP ` + mysql.escape(artistTypes) + `;`;
                 db.query(query2, (err, results) =>{
                     if(err){
                         reject(err);
@@ -205,7 +205,7 @@ function searchSimilarArtists(aid){
 
 function searchSimilarPlaylist(pid){
     return new Promise((resolve, reject) => {
-        var query = `SELECT distinct * FROM playlist p where uid in (Select uid from playlist where pid = '`+mysql.escape(pid)+`');`;
+        var query = `SELECT distinct * FROM playlist p where uid in (Select uid from playlist where pid = `+mysql.escape(pid)+`);`;
         console.log(query)
         db.query(query, (err, result) => {
             if (err) {
@@ -219,7 +219,7 @@ function searchSimilarPlaylist(pid){
 
 function searchSimilarAlbums(abid){
     return new Promise((resolve, reject) => {
-        var query = `SELECT distinct ab.* FROM album ab, songs s, AlbumSong abms where ab.abid != '`+mysql.escape(abid)+`' and ab.abid = abms.abid and abms.sid = s.sid and s.sgenre in (SELECT s.sgenre FROM album ab, songs s, AlbumSong abms where ab.abid = abms.abid and abms.sid = s.sid and ab.abid = '`+mysql.escape(abid)+`')`;
+        var query = `SELECT distinct ab.* FROM album ab, songs s, AlbumSong abms where ab.abid != `+mysql.escape(abid)+` and ab.abid = abms.abid and abms.sid = s.sid and s.sgenre in (SELECT s.sgenre FROM album ab, songs s, AlbumSong abms where ab.abid = abms.abid and abms.sid = s.sid and ab.abid = `+mysql.escape(abid)+`)`;
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -234,7 +234,7 @@ function searchSimilarAlbums(abid){
 
 exports.getPlayListKeyword = function(username) {
     return new Promise((resolve, reject) => {
-        var query = "select pid,ptitle, ptype from playlist where uid = '" + mysql.escape(username) + "';";
+        var query = "select pid,ptitle, ptype from playlist where uid = " + mysql.escape(username) + ";";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -247,7 +247,7 @@ exports.getPlayListKeyword = function(username) {
 
 exports.deletePlayList = function(pid) {
     return new Promise((resolve, reject) => {
-        var query = "delete from playlist where pid = '" + mysql.escape(pid) + "';";
+        var query = "delete from playlist where pid = " + mysql.escape(pid) + ";";
         console.log(query);
         db.query(query, (err, results) => {
             console.log(pid);
@@ -325,7 +325,7 @@ var validatePassword = function(plainPass, hashedPass, callback) {
 
 exports.addRating = function(uid, sid, rating) {
     return new Promise((resolve, reject) => {
-        var query = "INSERT INTO rating (`uid`, `sid`, `rating`, `rdate`) VALUES('" + mysql.escape(uid) + "', '" + mysql.escape(sid) + "', " + mysql.escape(rating) + ", NOW()) ON DUPLICATE KEY UPDATE rating=" + mysql.escape(rating) + ", rdate=NOW();";
+        var query = "INSERT INTO rating (`uid`, `sid`, `rating`, `rdate`) VALUES(" + mysql.escape(uid) + ", " + mysql.escape(sid) + ", " + mysql.escape(rating) + ", NOW()) ON DUPLICATE KEY UPDATE rating=" + mysql.escape(rating) + ", rdate=NOW();";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -338,7 +338,7 @@ exports.addRating = function(uid, sid, rating) {
 
 exports.addArtistLikes = function(uid, aid) {
     return new Promise((resolve, reject) => {
-        var query = "INSERT INTO Likes (`uid`, `aid`, `likedt`) VALUES('" + mysql.escape(uid) + "', '" + mysql.escape(aid) + "', NOW()) ON DUPLICATE KEY UPDATE likedt=NOW();";
+        var query = "INSERT INTO Likes (`uid`, `aid`, `likedt`) VALUES(" + mysql.escape(uid) + ", " + mysql.escape(aid) + ", NOW()) ON DUPLICATE KEY UPDATE likedt=NOW();";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -351,7 +351,7 @@ exports.addArtistLikes = function(uid, aid) {
 
 exports.deleteArtistLikes = function(uid, aid) {
     return new Promise((resolve, reject) => {
-        var query = "DELETE FROM Likes WHERE uid='" + mysql.escape(uid) + "' and aid='" + mysql.escape(aid) + "';";
+        var query = "DELETE FROM Likes WHERE uid=" + mysql.escape(uid) + " and aid=" + mysql.escape(aid) + ";";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -364,7 +364,7 @@ exports.deleteArtistLikes = function(uid, aid) {
 
 exports.checkArtistLikes = function(uid, aid) {
     return new Promise((resolve, reject) => {
-        var query = "select * from Likes where uid='" + mysql.escape(uid) + "' and aid = '" + mysql.escape(aid) + "';";
+        var query = "select * from Likes where uid=" + mysql.escape(uid) + " and aid = " + mysql.escape(aid) + ";";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -377,7 +377,7 @@ exports.checkArtistLikes = function(uid, aid) {
 
 exports.checkUserFollow = function(uid, pid) {
     return new Promise((resolve, reject) => {
-        var query1 = `Select uid from playlist where pid = '` + mysql.escape(pid) + `';`
+        var query1 = `Select uid from playlist where pid = ` + mysql.escape(pid) + `;`
         db.query(query1, (err, result) => {
             if (err) {
                 reject(err);
@@ -387,7 +387,7 @@ exports.checkUserFollow = function(uid, pid) {
                     reject('same user');
                     return;
                 }
-                var query2 = `Select * from followers where uid ='` + mysql.escape(uid) + `' and unamefollow = '` + mysql.escape(unamefollow) + `';`;
+                var query2 = `Select * from followers where uid =` + mysql.escape(uid) + ` and unamefollow = ` + mysql.escape(unamefollow) + `;`;
                 db.query(query2, (err, result) => {
                     if (err) {
                         reject(err);
@@ -402,7 +402,7 @@ exports.checkUserFollow = function(uid, pid) {
 
 exports.adduserFollow = function(uid, pid) {
     return new Promise((resolve, reject) => {
-        var query1 = `Select uid from playlist where pid = '` + mysql.escape(pid) + `';`
+        var query1 = `Select uid from playlist where pid = ` + mysql.escape(pid) + `;`
         db.query(query1, (err, result) => {
             if (err) {
                 reject(err);
@@ -412,7 +412,7 @@ exports.adduserFollow = function(uid, pid) {
                     reject('same user');
                     return;
                 }
-                var query = "INSERT INTO followers (`uid`, `unamefollow`, `followdt`) VALUES('" + mysql.escape(uid) + "', '" + mysql.escape(unamefollow) + "', NOW()) ON DUPLICATE KEY UPDATE followdt=NOW();";
+                var query = "INSERT INTO followers (`uid`, `unamefollow`, `followdt`) VALUES(" + mysql.escape(uid) + ", " + mysql.escape(unamefollow) + ", NOW()) ON DUPLICATE KEY UPDATE followdt=NOW();";
                 db.query(query, (err, result) => {
                     if (err) {
                         reject(err);
@@ -427,7 +427,7 @@ exports.adduserFollow = function(uid, pid) {
 
 exports.deleteUserFollow = function(uid, pid) {
     return new Promise((resolve, reject) => {
-        var query1 = `Select uid from playlist where pid = '` + mysql.escape(pid) + `';`
+        var query1 = `Select uid from playlist where pid = ` + mysql.escape(pid) + `;`
         db.query(query1, (err, result) => {
             if (err) {
                 reject(err);
@@ -437,7 +437,7 @@ exports.deleteUserFollow = function(uid, pid) {
                     reject('same user');
                     return;
                 }
-                var query = "DELETE FROM followers WHERE uid='" + mysql.escape(uid) + "' and unamefollow='" + mysql.escape(unamefollow) + "';";
+                var query = "DELETE FROM followers WHERE uid=" + mysql.escape(uid) + " and unamefollow=" + mysql.escape(unamefollow) + ";";
                 db.query(query, (err, result) => {
                     if (err) {
                         reject(err);
@@ -452,7 +452,7 @@ exports.deleteUserFollow = function(uid, pid) {
 
 exports.getmyPl = function(uid) {
     return new Promise((resolve, reject) => {
-        var query = "select pid,ptitle from playlist where uid = '" + mysql.escape(uid) + "';";
+        var query = "select pid,ptitle from playlist where uid = " + mysql.escape(uid) + ";";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -466,9 +466,9 @@ exports.getmyPl = function(uid) {
 exports.addmyPl = function(sid, pid, keyV) {
     return new Promise((resolve, reject) => {
         if (keyV == 'pidc') {
-            var query = "Delete from pltrack where pid='" + mysql.escape(pid) + "'and sid= '" + mysql.escape(sid) + "';";
+            var query = "Delete from pltrack where pid=" + mysql.escape(pid) + " and sid= " + mysql.escape(sid) + ";";
         } else {
-            var query = "INSERT INTO pltrack (`pid`, `sid`, `snumber`) VALUES('" + mysql.escape(pid) + "', '" + mysql.escape(sid) + "', '" + mysql.escape(pid) + "');";
+            var query = "INSERT INTO pltrack (`pid`, `sid`, `snumber`) VALUES(" + mysql.escape(pid) + ", " + mysql.escape(sid) + ", " + mysql.escape(pid) + ");";
         }
         db.query(query, (err, result) => {
             if (err) {
@@ -483,15 +483,15 @@ exports.addmyPl = function(sid, pid, keyV) {
 exports.addtoplay = function(uid,sid,pid,abid) {
     return new Promise((resolve, reject) => {
         if(pid == '' && abid == ''){
-            var query = "INSERT INTO plays (`uid`, `sid`, `playstime`) VALUES('" + mysql.escape(uid) + "','" + mysql.escape(sid) + "', NOW());";
+            var query = "INSERT INTO plays (`uid`, `sid`, `playstime`) VALUES(" + mysql.escape(uid) + ", " + mysql.escape(sid) + ", NOW());";
         }
         else if(abid == ''){
-            var query = "INSERT INTO plays (`uid`, `pid`, `sid`, `playstime`) VALUES('" + mysql.escape(uid) + "', " + mysql.escape(pid) + ",'" + mysql.escape(sid) + "', NOW());";
+            var query = "INSERT INTO plays (`uid`, `pid`, `sid`, `playstime`) VALUES(" + mysql.escape(uid) + ", " + mysql.escape(pid) + ", " + mysql.escape(sid) + ", NOW());";
         }else if(pid == ''){
-            var query = "INSERT INTO plays (`uid`, `sid`, `abid`, `playstime`) VALUES('" + mysql.escape(uid) + "','" + mysql.escape(sid) + "', '" + mysql.escape(abid) + "', NOW());";
+            var query = "INSERT INTO plays (`uid`, `sid`, `abid`, `playstime`) VALUES(" + mysql.escape(uid) + ", " + mysql.escape(sid) + ", " + mysql.escape(abid) + ", NOW());";
         }
         else{
-            var query = "INSERT INTO plays (`uid`,`pid`, `sid`, `abid`, `playstime`) VALUES('" + mysql.escape(uid) + "', " + mysql.escape(pid) + ",'" + mysql.escape(sid) + "', '" + mysql.escape(abid) + "', NOW());";
+            var query = "INSERT INTO plays (`uid`,`pid`, `sid`, `abid`, `playstime`) VALUES(" + mysql.escape(uid) + ", " + mysql.escape(pid) + ", " + mysql.escape(sid) + ", " + mysql.escape(abid) + ", NOW());";
         }
         db.query(query, (err, result) => {
             if (err) {
@@ -505,7 +505,7 @@ exports.addtoplay = function(uid,sid,pid,abid) {
 
 exports.getMostRecentPlayedTrack = function(uid) {
     return new Promise((resolve, reject) => {
-        var query = "select s.sid,s.stitle,s.sduration,a.aname, a.aid from songs as s, plays as p,artist as a where p.uid = '" + mysql.escape(uid) + "' and s.sid = p.sid and a.aid = s.aid order by playstime desc limit 5";
+        var query = "select s.sid,s.stitle,s.sduration,a.aname, a.aid from songs as s, plays as p,artist as a where p.uid = " + mysql.escape(uid) + " and s.sid = p.sid and a.aid = s.aid order by playstime desc limit 5";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
@@ -518,7 +518,7 @@ exports.getMostRecentPlayedTrack = function(uid) {
 
 exports.getSimilarPlayedTrack = function(uid) {
     return new Promise((resolve, reject) => {
-        var query = "select s.sid,s.sgenre from songs as s, plays as p,artist as a where p.uid = '" + mysql.escape(uid) + "' and s.sid = p.sid and a.aid = s.aid order by playstime desc limit 5";
+        var query = "select s.sid,s.sgenre from songs as s, plays as p,artist as a where p.uid = " + mysql.escape(uid) + " and s.sid = p.sid and a.aid = s.aid order by playstime desc limit 5";
         db.query(query, (err, result) => {
             if (err) {
                 reject(err);
