@@ -29,7 +29,7 @@ block content
 				br
 				if recentPlaylist
 					if recentPlaylist.length>0
-						h4 MOST PLAYLIST
+						h4 Recent released Playlist
 						br
 						div.table-responsive
 							table.table.table-striped
@@ -41,12 +41,12 @@ block content
 									each item in recentPlaylist
 										tr
 											td
-												a(href= '/plays?key=pidc&val=' + item.pid)= item.ptitle 
+												a(href= '/plays?key=pid&val=' + item.pid)= item.ptitle 
 											td=item.ptype
 				
 					if ABRecent
 						if ABRecent.length>0
-							h4 MOST ALBUMS
+							h4 Recent released Albums
 							br
 							div.table-responsive
 								table.table.table-striped
@@ -57,7 +57,54 @@ block content
 										each item in ABRecent
 											tr
 												td
-													a(href= '/plays?key=abid&val=' + item.abid)= item.abtitle 
+													a(href= '/plays?key=abid&val=' + item.abid)= item.abtitle
+					if finalPTRes 
+						if finalPTRes.length > 0
+							br
+							div.nav
+								h4 Recently Played
+								br
+							br
+							div.table-responsive
+								table.table.table-striped
+									thead
+										tr
+											th Song Name
+											th Artist Name
+											th Duration
+											th 
+									tbody
+										each item in finalPTRes
+											tr
+												td
+													a(href= '/plays?key=tid&val=' + item.sid)= item.stitle
+												td= item.aname
+												td= item.sduration
+
+					if finalSimRel 
+						if finalSimRel.length > 0
+							br
+							div.nav
+								h4 Similar Songs
+								br
+							br
+							div.table-responsive
+								table.table.table-striped
+									thead
+										tr
+											th Song Name
+											th Artist Name
+											th Duration
+											th 
+									tbody
+										each item in finalSimRel
+											tr
+												td
+													a(href= '/plays?key=tid&val=' + item.sid)= item.stitle
+												td= item.aname
+												td= item.sduration
+					
+
 	include modals/alert
 	include modals/confirm
 
