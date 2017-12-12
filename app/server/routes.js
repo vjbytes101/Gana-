@@ -54,7 +54,7 @@ module.exports = function(app) {
                             var plRes2 = JSON.stringify(plres2);
                             var finalSimRes = JSON.parse(plRes2);
                             finalObject.finalSimRel = finalSimRes;
-                            //console.log(finalObject);
+                            console.log(finalObject);
                             res.render('home', finalObject);
                         });
                     });

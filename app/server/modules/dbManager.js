@@ -459,7 +459,13 @@ exports.getSimilarPlayedTrack = function(uid) {
                     }
                 }
                 query1 += " )group by s.sgenre limit 5;";
-                resolve(result);
+                db.query(query1, (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(result);
+                    }
+                });
             }
         });
     });
